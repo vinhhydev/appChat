@@ -1,4 +1,4 @@
-const lottieLogin = require("../../assets/lottie/login.json");
+const lottieLogin = require("../../assets/lottie/Login.json");
 
 export const lottieLink = {
     lottieLogin

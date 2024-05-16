@@ -1,0 +1,50 @@
+{
+  "project_info": {
+    "project_number": "486432815227",
+    "project_id": "ringchat-1d35c",
+    "storage_bucket": "ringchat-1d35c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:486432815227:android:0f7c9df85d5770c1600ade",
+        "android_client_info": {
+          "package_name": "con.appchat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "486432815227-uej22cho1psjk3q44ji1s7smvdcl7v89.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "con.appchat",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCSrK9cTirRCGaW32FoAtTyJsJupgUZs8U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "486432815227-f2vj56qvp7c25vtbb0up8hgh1ir2fofg.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "486432815227-5vke0gcueqnci17f0hvfck4388qscf7b.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.reactjs.native.example.appChat"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,24 @@
+//text
+const TEXT_BLACK_COLOR = '#000000';
+const PLACEHOLDER_TEXT_INPUT_COLOR = '#8f8f8f';
+const TEXT_SIGNUP = '#0d5af4';
+const ERROR_COLOR = '#f03737';
+//
+
+const LIGHT_GRAY = '#5f5f5f';
+
+//background
+const PRIMARY_COLOR = '#000000';
+const WHITE_COLOR = '#ffffff';
+const FACEBOOK_COLOR = '#4267B2';
+
+export const COLORS = {
+  TEXT_BLACK_COLOR,
+  PLACEHOLDER_TEXT_INPUT_COLOR,
+  PRIMARY_COLOR,
+  LIGHT_GRAY,
+  WHITE_COLOR,
+  FACEBOOK_COLOR,
+  TEXT_SIGNUP,
+  ERROR_COLOR,
+};

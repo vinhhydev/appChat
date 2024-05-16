@@ -1,11 +1,16 @@
-import { View, Text } from 'react-native'
-import React from 'react'
-import MainNavigation from './src/navigator/MainNavigation'
+import React from 'react';
+import {PaperProvider} from 'react-native-paper';
+import MainNavigation from './src/navigator/MainNavigation';
+import {AuthProvider} from './src/context/AuthContext';
 
 const App = () => {
   return (
-    <MainNavigation />
-  )
-}
+    <AuthProvider>
+      <PaperProvider>
+        <MainNavigation />
+      </PaperProvider>
+    </AuthProvider>
+  );
+};
 
-export default App
+export default App;
