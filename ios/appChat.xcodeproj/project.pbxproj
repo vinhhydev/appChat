@@ -46,8 +46,8 @@
 		D2A2FBB9C23B442EA8DFE5DA /* OpenSans_Condensed-ExtraBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F66EC79FB40249A2BA41A9E8 /* OpenSans_Condensed-ExtraBoldItalic.ttf */; };
 		DBC8571CFF44448985E1E28E /* OpenSans-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 71340B76E75C48EF9FAEFB0F /* OpenSans-ExtraBold.ttf */; };
 		DEF95EB28EDF441A8CE5E4E3 /* OpenSans_SemiCondensed-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0880374081DC4133B2019E93 /* OpenSans_SemiCondensed-LightItalic.ttf */; };
-		E31723C42BF5FCF8005BE844 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E31723C32BF5FCF8005BE844 /* GoogleService-Info.plist */; };
 		E34F77EE2BF316D500EB1424 /* Fonts in Resources */ = {isa = PBXBuildFile; fileRef = E34F77ED2BF316D500EB1424 /* Fonts */; };
+		E39732142BF6F68600F305A6 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E39732132BF6F68600F305A6 /* GoogleService-Info.plist */; };
 		E3C3F9F62BF356D000DB7708 /* Fonts in Resources */ = {isa = PBXBuildFile; fileRef = E3C3F9F52BF356D000DB7708 /* Fonts */; };
 		E647E18F10454CEAAAE87176 /* OpenSans_Condensed-SemiBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 224B54210BB9462E9EAF0FF9 /* OpenSans_Condensed-SemiBoldItalic.ttf */; };
 		EBFE32E813D14443874553D7 /* OpenSans_Condensed-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DB3E0E470EEF481FB38FF0E3 /* OpenSans_Condensed-Medium.ttf */; };
@@ -114,8 +114,8 @@
 		CDF03C6A5F0B4AC6AB15EDA8 /* OpenSans-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-Light.ttf"; path = "../assets/fonts/OpenSans-Light.ttf"; sourceTree = "<group>"; };
 		D6E146EC6BB34C528606837A /* OpenSans-BoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-BoldItalic.ttf"; path = "../assets/fonts/OpenSans-BoldItalic.ttf"; sourceTree = "<group>"; };
 		DB3E0E470EEF481FB38FF0E3 /* OpenSans_Condensed-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans_Condensed-Medium.ttf"; path = "../assets/fonts/OpenSans_Condensed-Medium.ttf"; sourceTree = "<group>"; };
-		E31723C32BF5FCF8005BE844 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		E34F77ED2BF316D500EB1424 /* Fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Fonts; path = "../node_modules/react-native-vector-icons/Fonts"; sourceTree = "<group>"; };
+		E39732132BF6F68600F305A6 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		E3C3F9F52BF356D000DB7708 /* Fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Fonts; path = "../node_modules/react-native-vector-icons/Fonts"; sourceTree = "<group>"; };
 		E4A14C4E61224E94911113FF /* OpenSans_SemiCondensed-SemiBoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans_SemiCondensed-SemiBoldItalic.ttf"; path = "../assets/fonts/OpenSans_SemiCondensed-SemiBoldItalic.ttf"; sourceTree = "<group>"; };
 		E96EC54D42A546A5BD9F6F73 /* OpenSans_Condensed-ExtraBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans_Condensed-ExtraBold.ttf"; path = "../assets/fonts/OpenSans_Condensed-ExtraBold.ttf"; sourceTree = "<group>"; };
@@ -210,7 +210,7 @@
 		13B07FAE1A68108700A75B9A /* appChat */ = {
 			isa = PBXGroup;
 			children = (
-				E31723C32BF5FCF8005BE844 /* GoogleService-Info.plist */,
+				E39732132BF6F68600F305A6 /* GoogleService-Info.plist */,
 				E34F77ED2BF316D500EB1424 /* Fonts */,
 				E3C3F9F52BF356D000DB7708 /* Fonts */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
@@ -413,7 +413,7 @@
 				278FCC1A618342D6BB0686EE /* OpenSans_SemiCondensed-Regular.ttf in Resources */,
 				78C2AE4A46CA45F0B94A16D0 /* OpenSans_SemiCondensed-SemiBold.ttf in Resources */,
 				2E9EB1A674804CC8A99DC0B7 /* OpenSans_SemiCondensed-SemiBoldItalic.ttf in Resources */,
-				E31723C42BF5FCF8005BE844 /* GoogleService-Info.plist in Resources */,
+				E39732142BF6F68600F305A6 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -663,7 +663,7 @@
 					"-lc++",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
-				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = con.appchat;
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = com.appchat;
 				PRODUCT_NAME = appChat;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -690,7 +690,7 @@
 					"-lc++",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
-				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = con.appchat;
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = com.appchat;
 				PRODUCT_NAME = appChat;
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";

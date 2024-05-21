@@ -10,13 +10,12 @@ import {collection, getFirestore} from 'firebase/firestore';
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: 'AIzaSyApTgUMCkfgAcZt_OMGLFqkJIT5injDU18',
-  authDomain: 'ringchat-1d35c.firebaseapp.com',
-  projectId: 'ringchat-1d35c',
-  storageBucket: 'ringchat-1d35c.appspot.com',
-  messagingSenderId: '486432815227',
-  appId: '1:486432815227:web:73289401116f5c59600ade',
-  measurementId: 'G-2NBQ4JGEDK',
+  apiKey: 'AIzaSyAzMmMaRaPNTFCjENi1TfNt9CVHhR3KNTw',
+  authDomain: 'appchat-eb054.firebaseapp.com',
+  projectId: 'appchat-eb054',
+  storageBucket: 'appchat-eb054.appspot.com',
+  messagingSenderId: '206561640153',
+  appId: '1:206561640153:web:7d7e14c54d38990d4448c8',
 };
 
 // Initialize Firebase
@@ -30,4 +29,5 @@ export const auth = initializeAuth(app, {
 export const db = getFirestore(app);
 
 export const userRef = collection(db, 'users');
+export const friendRef = collection(db, 'friends');
 export const roomRef = collection(db, 'rooms');

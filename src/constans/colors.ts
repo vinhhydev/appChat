@@ -2,11 +2,12 @@
 const TEXT_BLACK_COLOR = '#000000';
 const PLACEHOLDER_TEXT_INPUT_COLOR = '#8f8f8f';
 const TEXT_SIGNUP = '#0d5af4';
+const TEXT_SUGGESS_GRAY = '#f49d2b';
 const ERROR_COLOR = '#f03737';
 //
 
 const LIGHT_GRAY = '#5f5f5f';
-
+const INPUT_GRAY = '#e8e8e8';
 //background
 const PRIMARY_COLOR = '#000000';
 const WHITE_COLOR = '#ffffff';
@@ -21,4 +22,6 @@ export const COLORS = {
   FACEBOOK_COLOR,
   TEXT_SIGNUP,
   ERROR_COLOR,
+  INPUT_GRAY,
+  TEXT_SUGGESS_GRAY,
 };

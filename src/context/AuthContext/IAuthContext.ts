@@ -1,4 +1,11 @@
+import {BottomSheetModalMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 import {User} from 'firebase/auth';
+import {
+  DocumentData,
+  QueryDocumentSnapshot,
+  QuerySnapshot,
+} from 'firebase/firestore';
+import {IUser} from '../../types/userType';
 
 export interface IAuthContext {
   login: (
@@ -52,9 +59,29 @@ export interface IAuthContext {
       }
     | undefined
   >;
-  handleLoginWithGoogle: () => Promise<{
+  handleLoginWithGoogle: () => Promise<
+    | {
+        success: boolean;
+        data: User;
+      }
+    | {
+        success: boolean;
+        data?: undefined;
+      }
+  >;
+  isLogin: boolean;
+  user: IUser | undefined;
+  bottomSheetModalRef: React.RefObject<BottomSheetModalMethods>;
+  handlePresentModalPress: () => void;
+  handleSheetChanges: (index: number) => void;
+  handleDismissModalPress: () => void;
+  getSuggestFriends: () => Promise<IUser[]>;
+  searchFriends: (
+    textSearch: string,
+  ) => Promise<QuerySnapshot<DocumentData, DocumentData>>;
+  addFriend: (friend: IUser) => Promise<{
     success: boolean;
   }>;
-  isLogin: boolean;
-  user: User | undefined;
+  checkIsFriend: (userId: string) => Promise<boolean>;
+  getListFriend: () => Promise<IUser[]>
 }

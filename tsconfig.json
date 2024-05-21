@@ -1,8 +1,13 @@
 {
   "compilerOptions": {
+    "module": "esnext",
+    "target": "es2015",
+    "jsx": "react-jsx",
+    "strict": true,
     "paths": {
       "@firebase/auth": ["./node_modules/@firebase/auth/dist/index.rn.d.ts"]
     }
   },
+  "include": ["./**/*"],
   "extends": "@react-native/typescript-config/tsconfig.json"
 }

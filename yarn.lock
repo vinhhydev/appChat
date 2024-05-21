@@ -2253,6 +2253,40 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@gorhom/bottom-sheet@npm:^4":
+  version: 4.6.1
+  resolution: "@gorhom/bottom-sheet@npm:4.6.1"
+  dependencies:
+    "@gorhom/portal": 1.0.14
+    invariant: ^2.2.4
+  peerDependencies:
+    "@types/react": "*"
+    "@types/react-native": "*"
+    react: "*"
+    react-native: "*"
+    react-native-gesture-handler: ">=1.10.1"
+    react-native-reanimated: ">=2.2.0"
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+    "@types/react-native":
+      optional: true
+  checksum: fc30da15c5d7e7c7b81ad2450e6ecb3884f0e040bc1ed5f467b1f846e2598519608a21c14cd50ea8288caac3cdfd9ad2c7742c31c77dd137804f94148105f389
+  languageName: node
+  linkType: hard
+
+"@gorhom/portal@npm:1.0.14":
+  version: 1.0.14
+  resolution: "@gorhom/portal@npm:1.0.14"
+  dependencies:
+    nanoid: ^3.3.1
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 227bb96a2db854ab29bb9da8d4f3823c7f7448358de459709dd1b78522110da564c9a8734c6bc7d7153ed7c99320e0fb5d60b420c2ebb75ecaf2f0d757f410f9
+  languageName: node
+  linkType: hard
+
 "@grpc/grpc-js@npm:~1.9.0":
   version: 1.9.14
   resolution: "@grpc/grpc-js@npm:1.9.14"
@@ -3991,6 +4025,7 @@ __metadata:
     "@babel/core": ^7.20.0
     "@babel/preset-env": ^7.20.0
     "@babel/runtime": ^7.20.0
+    "@gorhom/bottom-sheet": ^4
     "@react-native-async-storage/async-storage": ^1.23.1
     "@react-native-firebase/app": ^19.2.2
     "@react-native-google-signin/google-signin": ^11.0.1
@@ -4509,9 +4544,9 @@ __metadata:
   linkType: hard
 
 "caniuse-lite@npm:^1.0.30001587":
-  version: 1.0.30001618
-  resolution: "caniuse-lite@npm:1.0.30001618"
-  checksum: 7a87a49f5b2432b4bd428d3c1b629c49699aa75390e29915745f6e1753c8f91d990ec468a0306ea2b6efd5e76435a127a7c535cb28b9d1bd268732057a5d64c1
+  version: 1.0.30001620
+  resolution: "caniuse-lite@npm:1.0.30001620"
+  checksum: 1831e519c29ce6971bc50d56bab196a307fcb4181e7deaa80df314b035b87b3912b8626b4e87adc301d0bfe6a90b99814101b1cb28114b96e720f996f19bdc0d
   languageName: node
   linkType: hard
 
@@ -5111,9 +5146,9 @@ __metadata:
   linkType: hard
 
 "electron-to-chromium@npm:^1.4.668":
-  version: 1.4.768
-  resolution: "electron-to-chromium@npm:1.4.768"
-  checksum: ce60d033ce1d1fc41f3873cadfdac969b406b41ba53594e78e34ed3a0d42c0dd30ca4375dbfb5588313aaddaf9ffb54964d587dfc70fcc4cd97a6b2b8ba839a2
+  version: 1.4.774
+  resolution: "electron-to-chromium@npm:1.4.774"
+  checksum: 5b68ea2583b406e43dc6cea7511a070adddb1da27c29a50ae721851b4b1f4a54412933a9f1d2d62c35f0bfa5bb56735a1793f4387ea4d3470d59502f5084bff1
   languageName: node
   linkType: hard
 
@@ -8333,7 +8368,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nanoid@npm:^3.1.23":
+"nanoid@npm:^3.1.23, nanoid@npm:^3.3.1":
   version: 3.3.7
   resolution: "nanoid@npm:3.3.7"
   bin:
