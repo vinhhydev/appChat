@@ -7,6 +7,7 @@ import {getAnalytics} from 'firebase/analytics';
 import {getReactNativePersistence, initializeAuth} from 'firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {collection, getFirestore} from 'firebase/firestore';
+import {getStorage} from 'firebase/storage';
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
@@ -27,6 +28,7 @@ export const auth = initializeAuth(app, {
 });
 
 export const db = getFirestore(app);
+export const storage = getStorage(app);
 
 export const userRef = collection(db, 'users');
 export const friendRef = collection(db, 'friends');

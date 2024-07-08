@@ -9,7 +9,6 @@ import {
 import {IAuthContext} from './IAuthContext';
 import {
   GoogleAuthProvider,
-  User,
   createUserWithEmailAndPassword,
   onAuthStateChanged,
   signInWithCredential,
@@ -20,23 +19,28 @@ import {
 import {LoginManager, Profile, Settings} from 'react-native-fbsdk-next';
 import {auth as myAuth, db, userRef, friendRef} from '../../../FirebaseConfig';
 import {
+  Timestamp,
   addDoc,
   and,
   collection,
   doc,
   getDoc,
   getDocs,
-  limit,
   or,
-  orderBy,
   query,
   setDoc,
+  updateDoc,
   where,
 } from 'firebase/firestore';
 import {Alert, Platform} from 'react-native';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {BottomSheetModal} from '@gorhom/bottom-sheet';
 import {IUser} from '../../types/userType';
+import {useAppDispatch} from '../../redux/hook';
+import {loginUser} from '../../redux/slices/userSlice';
+import {useAppState} from '@react-native-community/hooks';
+import {Helpers} from '../../common';
+
 const AuthContext = createContext({});
 
 //setting app id facebook sign in
@@ -54,6 +58,8 @@ const AuthProvider = ({children}: {children: React.ReactNode}) => {
   const [isLogin, setIsLogin] = useState(false);
   const [user, setUser] = useState<IUser>();
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+  const dispatch = useAppDispatch();
+  // const userState = useAppDispatch((state: RootState) => state.user.user);
   // callbacks
   const handlePresentModalPress = useCallback(() => {
     bottomSheetModalRef.current?.present();
@@ -68,22 +74,48 @@ const AuthProvider = ({children}: {children: React.ReactNode}) => {
     const unSub = onAuthStateChanged(myAuth, async dataUser => {
       console.log('auth change', user);
       if (dataUser) {
-        setIsLogin(true);
         const data = (await getInforUser(dataUser.uid)) as IUser;
+        dispatch(loginUser(data));
         setUser(data);
+        await changeStatus('online', data.userId);
       } else {
-        setIsLogin(false);
         setUser(undefined);
       }
     });
     return unSub;
   }, []);
 
+  useEffect(() => {
+    if (!Helpers.isNullOrUndefined(user)) {
+      setIsLogin(true);
+    } else {
+      setIsLogin(false);
+    }
+  }, [user]);
+
+  const appState = useAppState();
+  useEffect(() => {
+    //change status active user when close app
+    if (Platform.OS === 'android') {
+      if (appState !== 'active') {
+        changeStatus('offline', user?.userId!);
+      } else {
+        changeStatus('online', user?.userId!);
+      }
+    } else {
+      if (appState === 'inactive') {
+        changeStatus('offline', user?.userId!);
+      } else {
+        changeStatus('online', user?.userId!);
+      }
+    }
+  }, [appState]);
   const getInforUser = async (userId: string) => {
     const docRef = doc(db, 'users', userId);
     const docSnap = await getDoc(docRef);
     return docSnap.data();
   };
+
   const login = async (email: string, password: string) => {
     try {
       const response = await signInWithEmailAndPassword(
@@ -92,6 +124,10 @@ const AuthProvider = ({children}: {children: React.ReactNode}) => {
         password,
       );
       console.log('Login: ', response.user);
+      await updateDoc(doc(db, 'users', response.user.uid), {
+        status: true, //change status active user
+      });
+
       return {success: true};
     } catch (ex) {
       if (ex instanceof Error) {
@@ -106,9 +142,24 @@ const AuthProvider = ({children}: {children: React.ReactNode}) => {
       }
     }
   };
+
+  const changeStatus = async (status: 'offline' | 'online', userId: string) => {
+    if (!Helpers.isNullOrUndefined(user)) {
+      console.log('STATUS CHANGE', status, user);
+
+      await updateDoc(doc(db, 'users', userId), {
+        status: status === 'online' ? true : false,
+      });
+    }
+  };
+
   const logout = async () => {
     try {
-      await signOut(myAuth);
+      await Promise.all([
+        signOut(myAuth),
+        changeStatus('offline', user?.userId!),
+      ]);
+
       return {success: true};
     } catch (ex) {
       return {success: false, message: ex};
@@ -233,7 +284,7 @@ const AuthProvider = ({children}: {children: React.ReactNode}) => {
 
   const getListFriend = async () => {
     const colRef = collection(db, 'friends', user?.userId!, 'listFriend');
-    const q = query(colRef);
+    const q = query(colRef, where('userId', '!=', user?.userId));
     const querySnapshot = await getDocs(q);
     const data: IUser[] = [];
     querySnapshot.forEach(val => {
@@ -301,12 +352,22 @@ const AuthProvider = ({children}: {children: React.ReactNode}) => {
           userName: friend.userName,
           address: friend.address,
           photoUrl: friend.photoUrl,
+          createAt: Timestamp.fromDate(new Date()),
+          newMessage: true,
+          lastMessage: '',
+          typeMessage: '',
+          createMessage: Timestamp.fromDate(new Date()),
         }),
         setDoc(friendsAddedRef, {
           userId: user?.userId,
           userName: user?.userName,
           address: user?.address,
           photoUrl: user?.photoUrl,
+          createAt: Timestamp.fromDate(new Date()),
+          newMessage: true,
+          lastMessage: '',
+          typeMessage: '',
+          createMessage: Timestamp.fromDate(new Date()),
         }),
       ]);
       return {success: true};
@@ -321,7 +382,15 @@ const AuthProvider = ({children}: {children: React.ReactNode}) => {
     const docSnap = await getDoc(docRef);
     return docSnap.exists();
   };
-
+  //get status active user
+  const getStatusByUserId = async (userId: string) => {
+    const docRef = doc(db, 'users', userId);
+    const q = await getDoc(docRef);
+    if (q.exists()) {
+      return q.data().status;
+    }
+    return false;
+  };
   const dataProvider = {
     login,
     register,
@@ -339,6 +408,7 @@ const AuthProvider = ({children}: {children: React.ReactNode}) => {
     addFriend,
     checkIsFriend,
     getListFriend,
+    getStatusByUserId,
   } as IAuthContext;
   return (
     <AuthContext.Provider value={dataProvider}>{children}</AuthContext.Provider>

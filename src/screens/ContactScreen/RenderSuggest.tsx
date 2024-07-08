@@ -8,20 +8,31 @@ import {DIMENSIONS} from '../../constans/dimensions';
 import {COLORS} from '../../constans/colors';
 import {useAuth} from '../../context/AuthContext';
 
-const RenderSuggest = (data: IUser) => {
+type IDataProp = {
+  item: IUser;
+  index: number;
+  listData: IUser[];
+  setList: React.Dispatch<React.SetStateAction<IUser[]>>;
+};
+
+const RenderSuggest = (data: IDataProp) => {
   const {user, addFriend, checkIsFriend} = useAuth();
   const [checkFriend, setCheckFriend] = useState(false);
   useEffect(() => {
     handleIsFriend();
-  }, []);
+  }, [data.listData]);
   const handleAddFriend = async () => {
-    const res = await addFriend(data);
+    const res = await addFriend(data.item);
     if (res) {
       Alert.alert('Thông báo', 'Thêm bạn thành công');
+      const filterData = data.listData.filter(
+        (_, _index) => _index !== data.index,
+      );
+      data.setList(filterData);
     }
   };
   const handleIsFriend = async () => {
-    const check = await checkIsFriend(data.userId);
+    const check = await checkIsFriend(data.item.userId);
     setCheckFriend(check);
   };
 
@@ -30,18 +41,18 @@ const RenderSuggest = (data: IUser) => {
       <View style={styles.viewAvatar}>
         <Image
           source={
-            Helpers.isNullOrUndefined(data.photoUrl)
+            Helpers.isNullOrUndefined(data.item.photoUrl)
               ? IMAGES.avatar_user_default
-              : {uri: data.photoUrl}
+              : {uri: data.item.photoUrl}
           }
           style={styles.imageAvatar}
           resizeMode="contain"
         />
       </View>
       <View style={styles.viewInfor}>
-        <AppText text={data.userName} textSize={18} />
+        <AppText text={data.item.userName} textSize={18} />
         <View style={styles.addFriend}>
-          {user?.userId !== data.userId && !checkFriend ? (
+          {user?.userId !== data.item.userId && !checkFriend ? (
             <TouchableOpacity onPress={handleAddFriend}>
               <AppText
                 text="Thêm bạn"
@@ -49,7 +60,7 @@ const RenderSuggest = (data: IUser) => {
                 textColor={COLORS.FACEBOOK_COLOR}
               />
             </TouchableOpacity>
-          ) : user?.userId === data.userId ? (
+          ) : user?.userId === data.item.userId ? (
             <AppText text="Bạn" textFont="bold" textColor={COLORS.LIGHT_GRAY} />
           ) : (
             checkFriend && (

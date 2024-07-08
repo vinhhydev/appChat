@@ -11,6 +11,10 @@ import AppText from '../components/AppText';
 import {COLORS} from '../constans/colors';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {fontFamily} from '../constans/fonts';
+import RoomChatScreen from '../screens/RoomChatScreen';
+import EditStoryScreen from '../screens/EditStoryScreen';
+import AlbumScreen from '../screens/AlbumScreen';
+import EditDetailStoryScreen from '../screens/EditDetailStoryScreen.tsx';
 
 const Stack = createNativeStackNavigator();
 
@@ -60,6 +64,31 @@ const MainNavigation = () => {
                     </TouchableOpacity>
                   );
                 },
+              })}
+            />
+            <Stack.Screen name="RoomChatScreen" component={RoomChatScreen} />
+            <Stack.Screen
+              name="EditStoryScreen"
+              component={EditStoryScreen}
+              options={({navigation}) => ({
+                presentation: 'modal',
+                headerShown: false,
+              })}
+            />
+            <Stack.Screen
+              name="EditDetailStoryScreen"
+              component={EditDetailStoryScreen}
+              options={() => ({
+                animation: 'none',
+                presentation: 'fullScreenModal',
+              })}
+            />
+            <Stack.Screen
+              name="AlbumScreen"
+              component={AlbumScreen}
+              options={({navigation}) => ({
+                presentation: 'modal',
+                headerShown: false,
               })}
             />
           </>

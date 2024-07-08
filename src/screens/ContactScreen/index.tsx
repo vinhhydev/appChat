@@ -44,7 +44,7 @@ const ContactScreen = () => {
   useEffect(() => {
     getFriends();
     loadSuggestFriends();
-  }, []);
+  }, [listSuggestFriend, listSearch]);
   const loadSuggestFriends = async () => {
     const getList = await getSuggestFriends();
     setListSuggestFreind(getList);
@@ -94,6 +94,7 @@ const ContactScreen = () => {
     }
     return false;
   };
+
   return (
     <GestureHandlerRootView style={{flex: 1}}>
       <View style={styles.containerList}>
@@ -103,11 +104,18 @@ const ContactScreen = () => {
           placeholderTextColor={COLORS.PLACEHOLDER_TEXT_INPUT_COLOR}
           onChangeText={handleSearchList}
         />
-        <FlatList
-          data={listFriend}
-          keyExtractor={(_, index) => `friend-${index}`}
-          renderItem={({item}) => <RenderListFriend {...item} />}
-        />
+        {listFriend.length > 0 ? (
+          <FlatList
+            data={listFriend}
+            keyExtractor={(_, index) => `friend-${index}`}
+            renderItem={({item}) => <RenderListFriend {...item} />}
+          />
+        ) : (
+          <AppText
+            text="Danh bạ chưa có liên hệ nào"
+            style={{alignSelf: 'center', position: 'absolute', top: '50%'}}
+          />
+        )}
       </View>
       <BottomSheetModalProvider>
         <View style={styles.containerBottomSheet}>
@@ -146,7 +154,14 @@ const ContactScreen = () => {
                       <FlatList
                         data={listSearch}
                         keyExtractor={(_, index) => `search-${index}`}
-                        renderItem={({item}) => <RenderSuggest {...item} />}
+                        renderItem={({item, index}) => (
+                          <RenderSuggest
+                            item={item}
+                            index={index}
+                            listData={listSearch}
+                            setList={setListSearch}
+                          />
+                        )}
                         scrollEnabled={false}
                       />
                     </View>
@@ -163,7 +178,14 @@ const ContactScreen = () => {
                     <FlatList
                       data={listSuggestFriend}
                       keyExtractor={(_, _index) => `suggest-${_index}`}
-                      renderItem={({item}) => <RenderSuggest {...item} />}
+                      renderItem={({item, index}) => (
+                        <RenderSuggest
+                          item={item}
+                          index={index}
+                          listData={listSuggestFriend}
+                          setList={setListSuggestFreind}
+                        />
+                      )}
                       horizontal={false}
                       showsVerticalScrollIndicator={false}
                       scrollEnabled={false}

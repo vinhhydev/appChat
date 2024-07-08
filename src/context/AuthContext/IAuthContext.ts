@@ -83,5 +83,6 @@ export interface IAuthContext {
     success: boolean;
   }>;
   checkIsFriend: (userId: string) => Promise<boolean>;
-  getListFriend: () => Promise<IUser[]>
+  getListFriend: () => Promise<IUser[]>;
+  getStatusByUserId: (userId: string) => Promise<boolean>;
 }
