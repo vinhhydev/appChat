@@ -1,5 +1,10 @@
 import {useEffect, useRef, useState} from 'react';
-import {Image, Platform, useWindowDimensions} from 'react-native';
+import {
+  Image,
+  LayoutChangeEvent,
+  Platform,
+  useWindowDimensions,
+} from 'react-native';
 import {Gesture} from 'react-native-gesture-handler';
 import Animated, {
   interpolate,
@@ -10,10 +15,9 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
-import {StaticValues} from '../../../constants';
 import {Colors} from '../../../theme';
 import type {UseImageModalProps} from '../Types';
-import Video, {VideoRef} from 'react-native-video';
+import {VideoRef} from 'react-native-video';
 
 const useImageModal = ({
   modalConfig,
@@ -39,30 +43,26 @@ const useImageModal = ({
     x: modalConfig.x,
     y: modalConfig.y,
   };
-  const oldTranslateX = useSharedValue(modalConfig.x);
-  const oldTranslateY = useSharedValue(modalConfig.y);
-  const top = useSharedValue(modalConfig.y);
-  const left = useSharedValue(modalConfig.x);
-  const imageHeight = useSharedValue(modalConfig.height);
-  const imageWidth = useSharedValue(modalConfig.width);
+  const oldTranslateX = useSharedValue(0);
+  const oldTranslateY = useSharedValue(0);
+  const top = useSharedValue(0);
+  const left = useSharedValue(0);
+  const imageHeight = useSharedValue(WINDOW_WIDTH);
+  const imageWidth = useSharedValue(WINDOW_HEIGHT);
+  const modalWidth = useSharedValue(0);
+  const modalHeight = useSharedValue(0);
+  const isAbsolute = useSharedValue(false);
   const [progressTimeModal, setProgressTimeModal] = useState(0);
   const imageRef = useRef<Image>(null);
   const videoRef = useRef<VideoRef>(null);
 
-  useEffect(() => {
-    if (modalConfig.visible) {
-      offset.value = withTiming(1, {}, () => {
-        oldTranslateX.value = withTiming(0, {duration: 500});
-        oldTranslateY.value = withTiming(0, {duration: 500});
-        top.value = withTiming(0, {duration: 500});
-        left.value = withTiming(0, {duration: 500});
-        imageHeight.value = withTiming(WINDOW_HEIGHT, {duration: 500});
-        imageWidth.value = withTiming(WINDOW_WIDTH, {duration: 500});
-        colorOffset.value = withTiming(1);
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const onLayout = (e: LayoutChangeEvent) => {
+    const {width, height} = e.nativeEvent.layout;
+    imageWidth.value = width;
+    imageHeight.value = height;
+    modalWidth.value = width;
+    modalHeight.value = height;
+  };
 
   /**
    * function use to close the modal
@@ -189,7 +189,27 @@ const useImageModal = ({
     });
 
   /**
-   * Tap gesture handler use to double tap to zoom in/out
+   * Tap gesture handler use to zoom image to full screen
+   */
+
+  const singleTapEvent = Gesture.Tap()
+    .numberOfTaps(1)
+    .onStart(e => {
+      console.log('HELLO TAP');
+      colorOffset.value = withTiming(1, {duration: 500}, () => {
+        // modalWidth.value = withTiming(WINDOW_WIDTH);
+        // modalHeight.value = withTiming(WINDOW_HEIGHT);
+        // translateX.value = withTiming(0, {duration: 500});
+        translateY.value = withTiming(-200, {duration: 500});
+        // top.value = withTiming(0, {duration: 500});
+        // left.value = withTiming(0, {duration: 500});
+        // imageHeight.value = withTiming(WINDOW_HEIGHT, {duration: 500});
+        // imageWidth.value = withTiming(WINDOW_WIDTH, {duration: 500});
+      });
+    });
+
+  /**
+   * Double tap gesture handler use to double tap to zoom in/out
    */
   const doubleTapEvent = Gesture.Tap()
     .numberOfTaps(2)
@@ -238,8 +258,8 @@ const useImageModal = ({
    * Use to update scale, top and left position of image
    */
   const animatedImageStyle = useAnimatedStyle(() => ({
-    height: imageHeight.value,
     width: imageWidth.value,
+    height: imageHeight.value,
     transform: [
       {
         scale: scale.value,
@@ -258,8 +278,21 @@ const useImageModal = ({
     backgroundColor: interpolateColor(
       colorOffset.value,
       [0, 1],
-      [Colors.transparent, Colors.white],
+      [Colors.transparent, 'red'],
     ),
+    width: modalWidth.value,
+    height: modalHeight.value,
+    top: top.value,
+    left: left.value,
+    transform: [
+      {
+        scale: scale.value,
+      },
+      {translateX: translateX.value},
+      {translateY: translateY.value},
+    ],
+    position: isAbsolute.value ? 'absolute' : 'relative',
+    zIndex: 999,
   }));
 
   /**
@@ -286,6 +319,7 @@ const useImageModal = ({
   return {
     loading,
     setLoading,
+    onLayout,
     onPressClose,
     animatedViewRef,
     imageAnimatedStyle,
@@ -294,6 +328,7 @@ const useImageModal = ({
     headerOpacityAnimation,
     panGestureEvent,
     pinchGestureEvent,
+    singleTapEvent,
     doubleTapEvent,
     imageRef,
     videoRef,

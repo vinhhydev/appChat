@@ -1,6 +1,8 @@
 import {
   ActivityIndicator,
   ListRenderItemInfo,
+  Platform,
+  Pressable,
   StyleSheet,
   View,
 } from 'react-native';
@@ -12,41 +14,50 @@ import FastImage from 'react-native-fast-image';
 import Video from 'react-native-video';
 import AppText from '../../components/AppText';
 import {COLORS} from '../../constans/colors';
-import {useEffect, useState} from 'react';
+import {useEffect, useMemo, useState} from 'react';
+import {useNavigation} from '@react-navigation/native';
 
+interface Photo extends PhotoIdentifier {
+  linkVideo?: string;
+}
 type PropData = {
-  data: ListRenderItemInfo<PhotoIdentifier>;
+  data: ListRenderItemInfo<Photo>;
   itemSize: number;
 };
 
 const RenderAlbum = (props: PropData) => {
+  const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(true);
-  return (
-    <View style={{justifyContent: 'center', alignItems: 'center'}}>
-      {props.data.item.node.type === 'image' ? (
-        <>
-          <FastImage
-            source={{
-              uri: props.data.item.node.image.uri,
-            }}
-            onLoadStart={() => setIsLoading(true)}
-            onLoadEnd={() => setIsLoading(false)}
-            resizeMode="cover"
-            style={{width: props.itemSize, height: props.itemSize}}
-          />
+  const type = useMemo(() => {
+    console.log('props', props.data.item.node);
+    return props.data.item.node.type.includes('video') ? 'video' : 'image';
+  }, []);
 
-          {isLoading && (
-            <ActivityIndicator
-              style={{position: 'absolute', top: '50%', left: '50%'}}
-            />
-          )}
-        </>
-      ) : (
+  return (
+    <Pressable
+      style={{justifyContent: 'center', alignItems: 'center'}}
+      onPress={() => {
+        navigation.navigate({
+          name: 'EditDetailStoryScreen',
+          params: {
+            background:
+              type === 'image'
+                ? props.data.item.node.image.uri
+                : props.data.item.linkVideo,
+            type: type,
+          },
+        } as never);
+      }}>
+      {type === 'video' ? (
         <View style={{position: 'relative'}}>
           <FastImage
-            source={{
-              uri: `data:image/jpeg;base64,${props.data.item.node.image.uri}`,
-            }}
+            source={
+              Platform.OS === 'ios'
+                ? {
+                    uri: `data:image/jpeg;base64,${props.data.item.node.image.uri}`,
+                  }
+                : {uri: props.data.item.node.image.uri}
+            }
             onLoadStart={() => setIsLoading(true)}
             onLoadEnd={() => setIsLoading(false)}
             resizeMode="cover"
@@ -72,8 +83,26 @@ const RenderAlbum = (props: PropData) => {
             />
           )}
         </View>
+      ) : (
+        <>
+          <FastImage
+            source={{
+              uri: props.data.item.node.image.uri,
+            }}
+            onLoadStart={() => setIsLoading(true)}
+            onLoadEnd={() => setIsLoading(false)}
+            resizeMode="cover"
+            style={{width: props.itemSize, height: props.itemSize}}
+          />
+
+          {isLoading && (
+            <ActivityIndicator
+              style={{position: 'absolute', top: '50%', left: '50%'}}
+            />
+          )}
+        </>
       )}
-    </View>
+    </Pressable>
   );
 };
 

@@ -1,11 +1,9 @@
-import React, {useEffect, useState} from 'react';
-import {Dimensions, Image, TouchableOpacity, View} from 'react-native';
+import {TouchableOpacity} from 'react-native';
 import {images} from '../../assets';
 import {ErrorImage, ImageLoader, ImageModal} from './components';
 import {useImagePreview} from './hooks';
 import styles from './Styles';
 import type {ImagePreviewProps} from './Types';
-import {IMAGES} from '../../../../constans/images';
 import ResizeImage from '../../../ResizeImage';
 
 const ImagePreview = ({
@@ -13,7 +11,6 @@ const ImagePreview = ({
   imageSource,
   imageStyle,
   renderHeader,
-  imageProps,
   pinchZoomEnabled = true,
   doubleTapZoomEnabled = true,
   swipeDownCloseEnabled = true,
@@ -33,8 +30,11 @@ const ImagePreview = ({
     setLoading,
     error,
     setError,
+    handleProgressTime,
+    progressTime,
+    setProgressTime,
+    loadCurrentTimeVideo,
   } = useImagePreview();
-
   return (
     <>
       {imageSource && (
@@ -51,6 +51,9 @@ const ImagePreview = ({
                 doubleTapZoomEnabled,
                 swipeDownCloseEnabled,
                 imageStyle,
+                progressTime,
+                setProgressTime,
+                loadCurrentTimeVideo,
               }}
             />
           )}
@@ -63,10 +66,15 @@ const ImagePreview = ({
               // type={type}
               ref={type === 'image' ? imageRef : videoRef}
               id={type}
+              onProgress={(progress: any) => handleProgressTime(type, progress)}
               onLayout={onLayout}
               source={imageSource}
+              paused={true}
               style={imageStyle}
               resizeMode="contain"
+              onLoad={() => {
+                setLoading(false);
+              }}
               onLoadStart={() => {
                 setLoading(true);
                 setError(false);
@@ -78,8 +86,8 @@ const ImagePreview = ({
                 setLoading(false);
                 setError(true);
               }}
-              {...imageProps}
             />
+
             {error && <ErrorImage {...{imageStyle, errorImageSource}} />}
             {loading && (
               <ImageLoader {...{renderImageLoader}} {...imageLoaderProps} />

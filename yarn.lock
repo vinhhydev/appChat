@@ -5778,6 +5778,7 @@ __metadata:
     react-hook-form: ^7.51.4
     react-native: 0.74.1
     react-native-create-thumbnail: ^2.0.0
+    react-native-device-info: ^11.1.0
     react-native-fast-image: ^8.6.3
     react-native-fbsdk-next: ^13.0.0
     react-native-gesture-handler: ^2.16.2
@@ -13094,6 +13095,15 @@ __metadata:
   peerDependencies:
     react-native: ">=0.59.0"
   checksum: 3ae3b8105ebff36876dfc620a16937cc9e9f28ba473da4e695cc8ccc32243ba215df34bf07ffd977782f5e871f0dcac89a28f11987d98ff7e76039c67a5ac04a
+  languageName: node
+  linkType: hard
+
+"react-native-device-info@npm:^11.1.0":
+  version: 11.1.0
+  resolution: "react-native-device-info@npm:11.1.0"
+  peerDependencies:
+    react-native: "*"
+  checksum: 272cab82573933a1f3a9bc394b82a387ccbdf9fbef131fc1f04b8ff78b36f581931b5c643f5aa278f28577cbc320ef2ac588cafdb73292e9b0cf4427d54c44ce
   languageName: node
   linkType: hard
 

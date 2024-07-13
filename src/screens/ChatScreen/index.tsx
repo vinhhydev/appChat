@@ -62,8 +62,8 @@ const ChatScreen = () => {
           typeMessage: doc.data().typeMessage,
         };
       }) as DataListMess[];
-
       setListMess(getList);
+      setLoading(false);
     });
     return unsub;
   }, [isFocused]);
@@ -74,11 +74,11 @@ const ChatScreen = () => {
     });
   };
 
-  useEffect(() => {
-    if (listMess && listMess.length > 0) {
-      setLoading(false);
-    }
-  }, [listMess]);
+  // useEffect(() => {
+  //   if (listMess && listMess.length > 0) {
+  //     setLoading(false);
+  //   }
+  // }, [listMess]);
 
   return (
     <SafeAreaView>

@@ -33,12 +33,14 @@ const RenderItemStory = (props: PropsData) => {
           onPress={() => navigation.navigate('EditStoryScreen' as never)}>
           <ImageBackground
             style={styles.itemView}
-            source={{
-              uri:
-                user.photoUrl.length > 0
-                  ? user.photoUrl
-                  : IMAGES.avatar_user_default,
-            }}>
+            resizeMode="cover"
+            source={
+              user.photoUrl.length > 0
+                ? {
+                    uri: user.photoUrl,
+                  }
+                : IMAGES.avatar_user_default
+            }>
             <View style={styles.btnPlus}>
               <Icon name="add" size={20} />
             </View>
@@ -46,6 +48,13 @@ const RenderItemStory = (props: PropsData) => {
               text="Thêm vào tin"
               textColor={COLORS.WHITE_COLOR}
               textFont="bold"
+              style={{
+                alignSelf: 'center',
+                textAlign: 'center',
+                textShadowColor: 'black',
+                textShadowOffset: {width: 2, height: 0},
+                textShadowRadius: 5,
+              }}
             />
           </ImageBackground>
         </TouchableOpacity>
@@ -185,5 +194,9 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     color: COLORS.WHITE_COLOR,
     fontWeight: '700',
+    textAlign: 'center',
+    textShadowColor: 'black',
+    textShadowOffset: {width: 2, height: 0},
+    textShadowRadius: 5,
   },
 });

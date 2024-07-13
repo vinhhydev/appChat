@@ -1,4 +1,4 @@
-import {Alert, Pressable, StyleSheet, View} from 'react-native';
+import {Alert, Platform, Pressable, StyleSheet, View} from 'react-native';
 import {GestureDetector, Gesture} from 'react-native-gesture-handler';
 import AppText from '../../components/AppText';
 import {TextStoryProp} from '.';
@@ -43,7 +43,7 @@ function clamp(val: number, min: number, max: number) {
 }
 
 const RenderText = (props: PropData) => {
-  const [zIndex, setZIndex] = useState(props.index);
+  const [zIndex, setZIndex] = useState(props.index + 10);
   const translationX = useSharedValue(0);
   const translationY = useSharedValue(0);
   const prevTranslationX = useSharedValue(0);
@@ -79,11 +79,13 @@ const RenderText = (props: PropData) => {
         translationY.value = withTiming(saveValue.y, {duration: 300});
         opacity.value = 1;
       }
+    } else {
+      console.log('OPACITY', opacity.value);
     }
   }, [props.showModalEdit]);
   useEffect(() => {
     if (props.indexHover !== props.index) {
-      if (zIndex > 0) {
+      if (zIndex > 10) {
         setZIndex(zIndex - 1);
       }
     }
@@ -95,14 +97,12 @@ const RenderText = (props: PropData) => {
       prevTranslationY.value = translationY.value;
       props.setIsTouchView(true);
       props.setIndexHover(props.index);
-      setZIndex(props.lengthList);
+      setZIndex(props.lengthList + 10);
     })
 
     .onUpdate(event => {
       const maxTranslateX = DIMENSIONS.width / 2 - 50;
       const maxTranslateY = DIMENSIONS.height / 2 - 50;
-      const test = event.x;
-      const testY = event.y;
       const fingX = event.absoluteX;
       const fingY = event.absoluteY;
       translationX.value = clamp(
@@ -116,7 +116,8 @@ const RenderText = (props: PropData) => {
         maxTranslateY,
       );
       const x = Math.round(fingX);
-      const y = Math.round(fingY) - 45; // 45 height view remove
+      const y =
+        Platform.OS === 'ios' ? Math.round(fingY) - 45 : Math.round(fingY); // 45 height view remove
       const roundX = Math.round(props.positionRemove.x);
       const roundY = Math.round(props.positionRemove.y);
       // console.log('X', x);
@@ -162,7 +163,7 @@ const RenderText = (props: PropData) => {
         translationY.value = withTiming(0 - 20, {
           duration: 300,
         });
-        opacity.value = withTiming(0, {duration: 500});
+        opacity.value = withTiming(0, {duration: 300});
         runOnJS(props.handleEditText)(
           props.item.text,
           props.item.color,

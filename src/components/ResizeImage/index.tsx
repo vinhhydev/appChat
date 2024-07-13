@@ -1,16 +1,19 @@
-import React, {useState, useEffect, forwardRef} from 'react';
+import {useState, useEffect, forwardRef, useRef} from 'react';
 import {
-  View,
   Image,
   StyleSheet,
-  Dimensions,
   ImageProps,
   ImageSourcePropType,
   ImageStyle,
   Pressable,
 } from 'react-native';
 import {createThumbnail} from 'react-native-create-thumbnail';
-import Video, {ReactVideoProps, ReactVideoSource} from 'react-native-video';
+import Video, {
+  ReactVideoProps,
+  ReactVideoSource,
+  VideoRef,
+} from 'react-native-video';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 interface ResizeImageProps extends Omit<ImageProps, 'source'> {
   source: ImageSourcePropType;
@@ -30,7 +33,8 @@ type ResizeMediaProps = ResizeVideoProps | ResizeImageProps;
 const ResizeImage = forwardRef<any, ResizeMediaProps>((props, ref) => {
   const [aspectRatio, setAspectRatio] = useState<number>(1);
   const [thumnailVideo, setThumnailVideo] = useState('');
-  const [playVideo, setPlayVideo] = useState(false);
+  const {paused} = props as ResizeVideoProps;
+  const [pauseVideo, setPauseVideo] = useState(paused);
   const isVideo = props.id === 'video';
 
   useEffect(() => {
@@ -50,10 +54,10 @@ const ResizeImage = forwardRef<any, ResizeMediaProps>((props, ref) => {
       }
     } else {
       const {source} = props as ResizeVideoProps;
+
       if (source && source.uri) {
         createThumbnail({url: source.uri as string, timeStamp: 5000})
           .then(response => {
-            console.log('THUM');
             // if (!playVideo) {
             //   setThumnailVideo(response.path);
             // }
@@ -66,18 +70,38 @@ const ResizeImage = forwardRef<any, ResizeMediaProps>((props, ref) => {
           });
       }
     }
-  }, [props, isVideo]);
+  }, [isVideo]);
   const handleImageSize = (width: number, height: number) => {
     setAspectRatio(width / height);
   };
+
+  // const handlePauseOrResume = () =>{
+  //   if(pauseVideo){
+
+  //   }
+  //   setPauseVideo(!pauseVideo)
+  // }
+
   return isVideo ? (
-    <Video
-      {...(props as ResizeVideoProps)}
-      style={[props.style, {width: '100%', aspectRatio}]}
-      resizeMode="contain"
-      paused={false}
-      ref={ref}
-    />
+    <>
+      <Video
+        {...(props as ResizeVideoProps)}
+        style={[props.style, {width: '100%', aspectRatio}]}
+        resizeMode="contain"
+        onEnd={() => {
+          setPauseVideo(true);
+        }}
+        paused={pauseVideo}
+        ref={ref}
+      />
+      {pauseVideo && (
+        <Pressable
+          style={styles.iconPlay}
+          onPress={() => setPauseVideo(!pauseVideo)}>
+          <Icon name="play-arrow" size={30} color={'white'} />
+        </Pressable>
+      )}
+    </>
   ) : (
     <Image
       {...(props as ResizeImageProps)}
@@ -89,10 +113,14 @@ const ResizeImage = forwardRef<any, ResizeMediaProps>((props, ref) => {
 });
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+  iconPlay: {
+    position: 'absolute',
+    top: '50%',
+    transform: [{translateY: -15}],
+    alignSelf: 'center',
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    padding: 5,
+    borderRadius: 30,
   },
 });
 

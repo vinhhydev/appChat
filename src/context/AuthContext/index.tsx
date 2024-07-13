@@ -77,7 +77,7 @@ const AuthProvider = ({children}: {children: React.ReactNode}) => {
         const data = (await getInforUser(dataUser.uid)) as IUser;
         dispatch(loginUser(data));
         setUser(data);
-        await changeStatus('online', data.userId);
+        await changeStatus('online', dataUser.uid);
       } else {
         setUser(undefined);
       }

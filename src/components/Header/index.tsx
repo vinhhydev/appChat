@@ -18,12 +18,13 @@ interface IHeader {
   styleTitle?: StyleProp<ViewStyle>;
   styleTextTitle?: StyleProp<TextStyle>;
   leftHeader?: JSX.Element;
+  styleHeader?: StyleProp<ViewStyle>;
 }
 
 const Header = (props: IHeader) => {
   const navigation = useNavigation();
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, props.styleHeader]}>
       <View style={styles.leftHeader}>
         {props.iconGoBackRight && (
           <TouchableOpacity onPress={() => navigation.goBack()}>

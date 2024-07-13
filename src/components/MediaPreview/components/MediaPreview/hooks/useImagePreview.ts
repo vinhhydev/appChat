@@ -6,7 +6,6 @@ import {
 } from 'react-native';
 import type {ModalConfigType} from '../Types';
 import {VideoRef} from 'react-native-video';
-import {Platform} from 'react-native';
 
 const useImagePreview = () => {
   const [modalConfig, setModalConfig] = useState<ModalConfigType>({
@@ -36,7 +35,7 @@ const useImagePreview = () => {
     touchRef.current?.measure((_ox, _oy, width, height, px, py) => {
       setModalConfig({
         x: px,
-        y: Platform.OS === 'ios' ? py - 60 : py,
+        y: py - 60,
         width: width,
         height: height,
         visible: true,

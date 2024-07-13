@@ -1,6 +1,7 @@
 import {
   Dimensions,
   FlatList,
+  Platform,
   StatusBar,
   StyleSheet,
   Text,
@@ -20,8 +21,11 @@ import {useNavigation} from '@react-navigation/native';
 import {Helpers} from '../../common';
 import {COLORS} from '../../constans/colors';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import {Modal, PaperProvider, Portal} from 'react-native-paper';
-import {Gesture, GestureDetector} from 'react-native-gesture-handler';
+import {PaperProvider, Portal} from 'react-native-paper';
+
+export interface Photo extends PhotoIdentifier {
+  linkVideo?: string;
+}
 
 export type ChooseAlbum = {
   indexAlbum: number;
@@ -39,8 +43,8 @@ const availableSpace = DIMENSIONS.width - (numColumns - 1) * gap;
 const itemSize = availableSpace / numColumns;
 
 const EditStoryScreen = () => {
-  const [gallery, setGallery] = useState<PhotoIdentifier[]>();
-  const [tempGallery, setTempGallery] = useState<PhotoIdentifier[]>();
+  const [gallery, setGallery] = useState<Photo[]>();
+  const [tempGallery, setTempGallery] = useState<Photo[]>();
   const [album, setAlbum] = useState<AlbumTracked[]>([]);
   const [chooseAlbum, setChooseAlbum] = useState<ChooseAlbum>();
   const navigation = useNavigation();
@@ -78,30 +82,41 @@ const EditStoryScreen = () => {
         let filterThumbnail: any[] = [];
         await Promise.all(
           r.edges.map(async val => {
-            if (val.node.type === 'video') {
-              const photoThumbnail = await CameraRoll.getPhotoThumbnail(
-                val.node.image.uri,
-                {
-                  allowNetworkAccess: true,
-                  quality: 1,
-                  targetSize: {
-                    width: itemSize,
-                    height: itemSize,
+            if (val.node.type.includes('video')) {
+              console.log('TRUE');
+
+              if (Platform.OS === 'ios') {
+                const photoThumbnail = await CameraRoll.getPhotoThumbnail(
+                  val.node.image.uri,
+                  {
+                    allowNetworkAccess: true,
+                    quality: 1,
+                    targetSize: {
+                      width: itemSize,
+                      height: itemSize,
+                    },
                   },
-                },
-              );
-              filterThumbnail.push({
-                node: {
-                  ...val.node,
-                  image: {
-                    ...val.node.image,
-                    uri: photoThumbnail.thumbnailBase64,
+                );
+                filterThumbnail.push({
+                  linkVideo: val.node.image.uri,
+                  node: {
+                    ...val.node,
+                    image: {
+                      ...val.node.image,
+                      uri: photoThumbnail.thumbnailBase64,
+                    },
                   },
-                },
-              });
+                });
+              } else {
+                filterThumbnail.push({
+                  linkVideo: val.node.image.uri,
+                  node: {...val.node},
+                });
+              }
             } else {
               filterThumbnail.push({
-                ...val,
+                linkVideo: '',
+                node: {...val.node},
               });
             }
           }),
@@ -109,6 +124,7 @@ const EditStoryScreen = () => {
         const sortMedia = filterThumbnail.sort(
           (a, b) => b.node.timestamp - a.node.timestamp,
         );
+
         setGallery(sortMedia);
         setTempGallery(sortMedia);
         // get Album
@@ -148,7 +164,6 @@ const EditStoryScreen = () => {
               });
             }
           });
-          console.log('tempAlbum', tempAlbum);
 
           setAlbum(tempAlbum);
           setChooseAlbum({

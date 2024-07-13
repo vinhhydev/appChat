@@ -40,10 +40,13 @@ import {
 } from 'firebase/firestore';
 import {db, storage} from '../../../FirebaseConfig';
 import {getDownloadURL, ref, uploadBytesResumable} from 'firebase/storage';
-import Video from 'react-native-video';
+import DeviceInfo from 'react-native-device-info';
 import FastImage from 'react-native-fast-image';
 import {useAuth} from '../../context/AuthContext';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
+
+// check phone have bunny ear
+const checkNotch = DeviceInfo.hasNotch();
 
 const RoomChatScreen = ({route}: any) => {
   const {getStatusByUserId} = useAuth();
@@ -55,7 +58,7 @@ const RoomChatScreen = ({route}: any) => {
   const [responseImage, setResponseImage] = useState<ImageOrVideo[]>([]);
   const [dataMessage, setDataMessage] = useState<IMessage[]>([]);
   const [loading, setLoading] = useState(true);
-  const [useKeyBoard, setUseKeyboard] = useState(false);
+  const [useKeyBoard, setUseKeyboard] = useState(true);
   const [roomId, setRoomId] = useState('');
   const [progress, setProgress] = useState(0);
 
@@ -80,6 +83,7 @@ const RoomChatScreen = ({route}: any) => {
     });
     return unsub;
   }, []);
+
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       'keyboardDidShow',
@@ -279,15 +283,31 @@ const RoomChatScreen = ({route}: any) => {
 
   return (
     <GestureHandlerRootView>
-      <SafeAreaView style={{backgroundColor: COLORS.WHITE_COLOR}}>
+      <SafeAreaView
+        style={{
+          flex: 1,
+          backgroundColor: COLORS.WHITE_COLOR,
+          position: 'relative',
+          paddingTop: Platform.OS === 'android' ? 0 : 60,
+        }}>
         <KeyboardAvoidingView
           enabled={useKeyBoard}
           behavior={'height'}
-          keyboardVerticalOffset={Platform.OS === 'android' ? 15 : 0}>
+          keyboardVerticalOffset={Platform.OS === 'android' ? 0 : -15}
+          style={{
+            width: DIMENSIONS.width,
+            height: checkNotch ? DIMENSIONS.height - 60 : DIMENSIONS.height,
+            paddingBottom: 15,
+          }}>
           <View style={styles.container}>
             <StatusBar barStyle={'dark-content'} />
-
             <Header
+              styleHeader={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                zIndex: 99,
+              }}
               iconGoBackRight
               titleHeader={
                 <View>
@@ -341,7 +361,10 @@ const RoomChatScreen = ({route}: any) => {
                     return (
                       <View
                         key={`select-${index}`}
-                        style={{paddingHorizontal: 5, position: 'relative'}}>
+                        style={{
+                          paddingHorizontal: 5,
+                          position: 'relative',
+                        }}>
                         {item.mime === 'image' ? (
                           <Image
                             resizeMode="cover"
@@ -419,11 +442,8 @@ export default RoomChatScreen;
 
 const styles = StyleSheet.create({
   container: {
-    width: DIMENSIONS.width,
-    height:
-      Platform.OS === 'ios' ? DIMENSIONS.height - 80 : DIMENSIONS.height - 10,
-    flexShrink: 1,
-    position: 'relative',
+    flex: 1,
+    paddingTop: 60,
   },
   titleHeader: {
     justifyContent: 'flex-start',
@@ -465,9 +485,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    borderTopWidth: 0.5,
     paddingHorizontal: 15,
-    padding: 10,
+    paddingVertical: 10,
+    backgroundColor: COLORS.WHITE_COLOR,
     maxHeight: 150,
   },
   viewPickImage: {

@@ -113,7 +113,7 @@ const stories: IUserStories[] = [
         isSeen: false,
       },
       {
-        id: '1',
+        id: '0',
         url: 'https://img.freepik.com/free-photo/cosmos-flowers_1373-83.jpg',
         type: 'image',
         duration: 10,

@@ -7,6 +7,7 @@ import {useAuth} from '../../context/AuthContext';
 // import {ImagePreview} from 'react-native-images-preview';
 import {DIMENSIONS} from '../../constans/dimensions';
 import {ImagePreview} from '../../components/ImagePreview';
+import MediaPreview from '../../components/MediaPreview/components/MediaPreview/MediaPreview';
 
 const RenderMessage = (props: IMessage) => {
   const {user} = useAuth();
@@ -25,10 +26,13 @@ const RenderMessage = (props: IMessage) => {
             }}
             imageStyle={[styles.imageMess]}
           />
-
-          <Pressable style={styles.iconPlay}>
-            <Icon name="play-arrow" size={30} color={COLORS.WHITE_COLOR} />
-          </Pressable>
+          {/* <MediaPreview
+            type={props.type}
+            imageSource={{
+              uri: props.path,
+            }}
+            imageStyle={[styles.imageMess]}
+          /> */}
         </>
       ) : (
         <ImagePreview
@@ -38,6 +42,13 @@ const RenderMessage = (props: IMessage) => {
           }}
           imageStyle={[styles.imageMess]}
         />
+        // <MediaPreview
+        //   type={props.type}
+        //   imageSource={{
+        //     uri: props.path,
+        //   }}
+        //   imageStyle={[styles.imageMess]}
+        // />
       )}
     </View>
   ) : (
@@ -55,9 +66,13 @@ const RenderMessage = (props: IMessage) => {
             }}
             imageStyle={[styles.imageMess]}
           />
-          <Pressable style={styles.iconPlay}>
-            <Icon name="play-arrow" size={30} color={COLORS.WHITE_COLOR} />
-          </Pressable>
+          {/* <MediaPreview
+            type={props.type}
+            imageSource={{
+              uri: props.path,
+            }}
+            imageStyle={[styles.imageMess]}
+          /> */}
         </>
       ) : (
         <ImagePreview
@@ -67,6 +82,13 @@ const RenderMessage = (props: IMessage) => {
           }}
           imageStyle={[styles.imageMess]}
         />
+        // <MediaPreview
+        //   type={props.type}
+        //   imageSource={{
+        //     uri: props.path,
+        //   }}
+        //   imageStyle={[styles.imageMess]}
+        // />
       )}
     </View>
   );

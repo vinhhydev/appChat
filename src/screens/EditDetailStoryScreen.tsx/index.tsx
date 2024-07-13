@@ -1,8 +1,10 @@
 import {
   FlatList,
   GestureResponderEvent,
+  ImageBackground,
   Keyboard,
   KeyboardAvoidingView,
+  Platform,
   Pressable,
   SafeAreaView,
   StatusBar,
@@ -34,6 +36,9 @@ import {
 import {useAuth} from '../../context/AuthContext';
 import {IMAGES} from '../../constans/images';
 import FastImage from 'react-native-fast-image';
+import DeviceInfo from 'react-native-device-info';
+import Video from 'react-native-video';
+import {Helpers} from '../../common';
 
 export type TextStoryProp = {
   text: string;
@@ -68,10 +73,25 @@ const gap = 60;
 const availableSpace = DIMENSIONS.width - 40 - (numColumns - 1) * gap;
 const itemSize = availableSpace / numColumns;
 
-const EditDetailStoryScreen = () => {
+// check phone have bunny ear
+const checkNotch = DeviceInfo.hasNotch();
+// only android
+const statusBarHeight = StatusBar.currentHeight ?? 0;
+
+const heightScreen = checkNotch
+  ? Platform.OS === 'android'
+    ? DIMENSIONS.height - statusBarHeight
+    : DIMENSIONS.height - 60
+  : DIMENSIONS.height;
+
+const bodyScreen = heightScreen * 0.88;
+const bottomScreen = heightScreen - bodyScreen;
+
+const EditDetailStoryScreen = ({route}: any) => {
   const navigation = useNavigation();
+  const background = route?.params?.background;
+  const type = route?.params?.type;
   const viewShot = useRef<ViewShot>(null);
-  const [uriCapture, setUriCapture] = useState('');
   const [showDrawView, setShowDrawView] = useState(false);
   const [indexBG, setIndexBG] = useState(0);
   const [showModalEdit, setShowModalEdit] = useState(false);
@@ -98,6 +118,7 @@ const EditDetailStoryScreen = () => {
   const [showSheet, setShowSheet] = useState(false);
   const {bottomSheetModalRef, handleSheetChanges, handlePresentModalPress} =
     useAuth();
+
   const renderBackdrop = useCallback(
     (props: BottomSheetBackdropProps) => (
       <BottomSheetBackdrop
@@ -294,7 +315,13 @@ const EditDetailStoryScreen = () => {
     return (
       <KeyboardAvoidingView
         behavior="height"
-        keyboardVerticalOffset={60}
+        keyboardVerticalOffset={
+          Platform.OS === 'android'
+            ? StatusBar.currentHeight
+            : checkNotch
+            ? 60
+            : 20
+        }
         style={styles.containerModal}>
         <View>
           <TouchableWithoutFeedback
@@ -464,14 +491,6 @@ const EditDetailStoryScreen = () => {
               top: '50%',
               left: 10,
               transform: [{translateY: -80}],
-              shadowColor: '#000',
-              shadowOffset: {
-                width: 0,
-                height: 5,
-              },
-              shadowOpacity: 0.36,
-              shadowRadius: 6.68,
-              elevation: 11,
               padding: 5,
               paddingVertical: 30,
             }}>
@@ -552,12 +571,17 @@ const EditDetailStoryScreen = () => {
       format: 'jpg',
       quality: 0.8,
     }).then(uri => {
+      const backgroundStory = {
+        background,
+        type,
+      };
       // console.log('URI CAPTURE', uri);
       // setUriCapture(uri);
       navigation.navigate({
         name: 'StoryScreen',
         params: {
           uriCapture: uri,
+          backgroundStory,
         },
       } as never);
     });
@@ -624,7 +648,7 @@ const EditDetailStoryScreen = () => {
         barStyle={'light-content'}
       />
       <GestureHandlerRootView
-        style={{backgroundColor: COLORS.TEXT_BLACK_COLOR}}>
+        style={[{backgroundColor: COLORS.TEXT_BLACK_COLOR}]}>
         <View style={styles.contentEdit}>
           {!showDrawView && !showModalEdit && !isTouchView && !showSheet && (
             <View style={styles.headerEdit}>
@@ -664,103 +688,138 @@ const EditDetailStoryScreen = () => {
                   />
                 </TouchableOpacity>
               </View>
-              <TouchableOpacity onPress={handleChangeBackground}>
-                <LinearGradient
-                  start={{x: 0, y: 0.1}}
-                  end={{x: 0.7, y: 0.4}}
-                  colors={LIST_BG_EDIT[indexBG]}
-                  style={styles.touchChangeColor}></LinearGradient>
-              </TouchableOpacity>
+              {Helpers.isNullOrUndefined(background) ? (
+                <TouchableOpacity onPress={handleChangeBackground}>
+                  <LinearGradient
+                    start={{x: 0, y: 0.1}}
+                    end={{x: 0.7, y: 0.4}}
+                    colors={LIST_BG_EDIT[indexBG]}
+                    style={styles.touchChangeColor}></LinearGradient>
+                </TouchableOpacity>
+              ) : (
+                <View />
+              )}
             </View>
           )}
-          <ViewShot
-            style={{flex: 1, backgroundColor: COLORS.TEXT_BLACK_COLOR}}
-            ref={viewShot}>
+          <ViewShot style={styles.viewShot} ref={viewShot}>
             <LinearGradient
               start={{x: 0, y: 0.1}}
               end={{x: 0.7, y: 0.3}}
-              colors={LIST_BG_EDIT[indexBG]}
-              style={styles.container}>
-              {uriCapture.length > 0 && (
-                <FastImage
-                  source={{uri: uriCapture}}
-                  resizeMode="contain"
-                  style={{width: 200, height: 200}}
-                />
-              )}
-              {!showSheet && (
-                <View style={styles.bodyEdit}>
-                  <Pressable
-                    style={styles.touchInput}
-                    onPress={() => {
-                      initText();
-                      setShowModalEdit(true);
-                      setEditMode(false);
-                    }}>
-                    {!showDrawView && !showModalEdit && (
-                      <AppText
-                        text={
-                          listTextStory.length === 0 ? 'Nhấn để nhập...' : ''
-                        }
-                        textColor={COLORS.INPUT_STORY_GRAY}
-                        textFont="bold"
-                        textSize={25}
-                      />
-                    )}
-                  </Pressable>
+              colors={background ? ['transparent'] : LIST_BG_EDIT[indexBG]}
+              style={styles.containerBackground}>
+              <>
+                {!showSheet && (
+                  <View style={styles.bodyEdit}>
+                    <Pressable
+                      style={styles.touchInput}
+                      onPress={() => {
+                        initText();
+                        setShowModalEdit(true);
+                        setEditMode(false);
+                      }}>
+                      {!showDrawView && !showModalEdit && (
+                        <AppText
+                          text={
+                            listTextStory.length === 0 &&
+                            Helpers.isNullOrUndefined(background)
+                              ? 'Nhấn để nhập...'
+                              : ''
+                          }
+                          textColor={COLORS.INPUT_STORY_GRAY}
+                          textFont="bold"
+                          textSize={25}
+                        />
+                      )}
+                    </Pressable>
+                  </View>
+                )}
+                {loadTextMap}
+                <View
+                  style={[
+                    styles.viewRemove,
+                    toRemove && {backgroundColor: COLORS.WHITE_COLOR},
+                    {opacity: isTouchView ? 1 : 0},
+                  ]}
+                  onLayout={e => {
+                    setPositionRemove({
+                      x: e.nativeEvent.layout.x,
+                      y: e.nativeEvent.layout.y,
+                    });
+                  }}>
+                  <Icon
+                    name="delete"
+                    size={25}
+                    color={
+                      toRemove ? COLORS.TEXT_BLACK_COLOR : COLORS.WHITE_COLOR
+                    }
+                  />
                 </View>
-              )}
-              {loadTextMap}
-              <View
-                style={[
-                  styles.viewRemove,
-                  toRemove && {backgroundColor: COLORS.WHITE_COLOR},
-                  {opacity: isTouchView ? 1 : 0},
-                ]}
-                onLayout={e => {
-                  setPositionRemove({
-                    x: e.nativeEvent.layout.x,
-                    y: e.nativeEvent.layout.y,
-                  });
-                }}>
-                <Icon
-                  name="delete"
-                  size={25}
-                  color={
-                    toRemove ? COLORS.TEXT_BLACK_COLOR : COLORS.WHITE_COLOR
-                  }
-                />
-              </View>
-              <View style={styles.contentDraw}>
-                <Svg>
-                  {listPath.map((item, index) => {
-                    return (
-                      <Path
-                        key={`pathList-${index}`}
-                        d={item.d.join('')}
-                        stroke={item.color}
-                        fill={'transparent'}
-                        strokeWidth={item.width}
-                        strokeLinejoin="round"
-                        strokeLinecap="round"
-                      />
-                    );
-                  })}
-                </Svg>
-              </View>
+                <View style={styles.contentDraw}>
+                  <Svg>
+                    {listPath.map((item, index) => {
+                      return (
+                        <Path
+                          key={`pathList-${index}`}
+                          d={item.d.join('')}
+                          stroke={item.color}
+                          fill={'transparent'}
+                          strokeWidth={item.width}
+                          strokeLinejoin="round"
+                          strokeLinecap="round"
+                        />
+                      );
+                    })}
+                  </Svg>
+                </View>
+              </>
             </LinearGradient>
           </ViewShot>
+          {/* {background}        */}
 
+          {type === 'video' ? (
+            <>
+              <LinearGradient
+                start={{x: 0, y: 0.1}}
+                end={{x: 0, y: 0.3}}
+                colors={[
+                  'rgba(0,0,0,0.14)',
+                  'rgba(0,0,0,0.03)',
+                  'transparent',
+                  'transparent',
+                ]}
+                style={[styles.containerBackground, {zIndex: 1}]}
+              />
+              <View style={styles.containerBackground}>
+                <Video
+                  style={{width: '100%', height: '100%'}}
+                  source={{uri: background}}
+                  repeat
+                  resizeMode="contain"
+                />
+              </View>
+            </>
+          ) : (
+            <ImageBackground
+              style={styles.containerBackground}
+              source={{uri: background}}
+              resizeMode="contain"
+            />
+          )}
           <View style={styles.bottomTool}>
             {!isTouchView && !showDrawView && !showSheet && (
               <>
                 <TouchableOpacity style={{alignItems: 'center'}}>
-                  <Icon name="settings" size={25} color={COLORS.WHITE_COLOR} />
+                  <Icon
+                    name="settings"
+                    size={DIMENSIONS.hp(3)}
+                    color={COLORS.WHITE_COLOR}
+                  />
                   <AppText
                     text="Quyền riêng tư"
                     textColor={COLORS.WHITE_COLOR}
                     style={{marginTop: 5}}
                     textFont="bold"
+                    textSize={DIMENSIONS.wp(4)}
                   />
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -817,26 +876,46 @@ export default EditDetailStoryScreen;
 const styles = StyleSheet.create({
   contentEdit: {
     width: DIMENSIONS.width,
-    height: DIMENSIONS.height - 60,
+    height: heightScreen,
     position: 'relative',
+    backgroundColor: COLORS.TEXT_BLACK_COLOR,
   },
-  container: {
-    flex: 1,
-    // backgroundColor: COLORS.BG_EDIT_STORY_COLOR,
-    paddingVertical: 20,
-    flexShrink: 1,
+  viewShot: {
+    width: DIMENSIONS.width,
+    height: bodyScreen,
+    backgroundColor: 'transparent',
+  },
+  containerBackground: {
+    width: DIMENSIONS.width,
+    height: bodyScreen,
+    backgroundColor: COLORS.BG_EDIT_STORY_COLOR,
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    left: 0,
+    bottom: 0,
+    zIndex: -99,
+    overflow: 'hidden',
     borderBottomStartRadius: 25,
     borderBottomEndRadius: 25,
   },
-
   headerEdit: {
+    flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
     position: 'absolute',
-    top: 30,
+    top: 20,
     left: 15,
     right: 15,
     zIndex: 99,
+    // shadowColor: '#000',
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 3,
+    // },
+    // shadowOpacity: 0.29,
+    // shadowRadius: 4.65,
+    // elevation: 7,
   },
   editTools: {
     flexDirection: 'row',
@@ -850,6 +929,7 @@ const styles = StyleSheet.create({
   },
   bodyEdit: {
     flex: 1,
+    zIndex: 1,
   },
   touchInput: {
     flex: 1,
@@ -858,11 +938,12 @@ const styles = StyleSheet.create({
   },
   bottomTool: {
     width: DIMENSIONS.width,
-    height: DIMENSIONS.height * 0.1,
+    height: bottomScreen - 10,
     paddingHorizontal: 15,
     paddingVertical: 15,
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
   },
   btnAdd: {
     flexDirection: 'row',
@@ -875,7 +956,7 @@ const styles = StyleSheet.create({
   },
   containerModal: {
     width: DIMENSIONS.width,
-    height: DIMENSIONS.height * 0.9 - 60,
+    height: bodyScreen,
     backgroundColor: 'rgba(0,0,0,0.5)',
     alignItems: 'center',
     position: 'absolute',
@@ -939,6 +1020,6 @@ const styles = StyleSheet.create({
     height: DIMENSIONS.height * 0.9 - 60,
     position: 'absolute',
     alignItems: 'center',
-    zIndex: -99,
+    zIndex: -1,
   },
 });
