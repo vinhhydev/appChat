@@ -25,6 +25,13 @@ PODS:
     - FBSDKCoreKit (= 17.0.1)
   - FBSDKShareKit (17.0.1):
     - FBSDKCoreKit (= 17.0.1)
+  - ffmpeg-kit-ios-https (6.0)
+  - ffmpeg-kit-react-native (6.0.2):
+    - ffmpeg-kit-react-native/https (= 6.0.2)
+    - React-Core
+  - ffmpeg-kit-react-native/https (6.0.2):
+    - ffmpeg-kit-ios-https (= 6.0)
+    - React-Core
   - Firebase (10.24.0):
     - Firebase/Core (= 10.24.0)
   - Firebase/Core (10.24.0):
@@ -1174,6 +1181,27 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
+  - react-native-slider (4.5.2):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.01.01.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Codegen
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - react-native-video (6.2.0):
     - DoubleConversion
     - glog
@@ -1464,6 +1492,8 @@ PODS:
     - React-Core
   - RNFlashList (1.6.4):
     - React-Core
+  - RNFS (2.20.0):
+    - React-Core
   - RNGestureHandler (2.16.2):
     - DoubleConversion
     - glog
@@ -1582,6 +1612,7 @@ DEPENDENCIES:
   - BVLinearGradient (from `../node_modules/react-native-linear-gradient`)
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
+  - ffmpeg-kit-react-native (from `../node_modules/ffmpeg-kit-react-native/ffmpeg-kit-react-native.podspec`)
   - Firebase
   - FirebaseCore
   - FirebaseCoreInternal
@@ -1621,6 +1652,7 @@ DEPENDENCIES:
   - react-native-fbsdk-next (from `../node_modules/react-native-fbsdk-next`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - "react-native-skia (from `../node_modules/@shopify/react-native-skia`)"
+  - "react-native-slider (from `../node_modules/@react-native-community/slider`)"
   - react-native-video (from `../node_modules/react-native-video`)
   - react-native-video-cache-control (from `../node_modules/react-native-video-cache-control`)
   - react-native-view-shot (from `../node_modules/react-native-view-shot`)
@@ -1652,6 +1684,7 @@ DEPENDENCIES:
   - RNFastImage (from `../node_modules/react-native-fast-image`)
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
   - "RNFlashList (from `../node_modules/@shopify/flash-list`)"
+  - RNFS (from `../node_modules/react-native-fs`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - "RNGoogleSignin (from `../node_modules/@react-native-google-signin/google-signin`)"
   - RNImageCropPicker (from `../node_modules/react-native-image-crop-picker`)
@@ -1673,6 +1706,7 @@ SPEC REPOS:
     - FBSDKGamingServicesKit
     - FBSDKLoginKit
     - FBSDKShareKit
+    - ffmpeg-kit-ios-https
     - Firebase
     - FirebaseAnalytics
     - FirebaseCore
@@ -1704,6 +1738,8 @@ EXTERNAL SOURCES:
     :podspec: "../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec"
   FBLazyVector:
     :path: "../node_modules/react-native/Libraries/FBLazyVector"
+  ffmpeg-kit-react-native:
+    :path: "../node_modules/ffmpeg-kit-react-native/ffmpeg-kit-react-native.podspec"
   fmt:
     :podspec: "../node_modules/react-native/third-party-podspecs/fmt.podspec"
   glog:
@@ -1771,6 +1807,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-safe-area-context"
   react-native-skia:
     :path: "../node_modules/@shopify/react-native-skia"
+  react-native-slider:
+    :path: "../node_modules/@react-native-community/slider"
   react-native-video:
     :path: "../node_modules/react-native-video"
   react-native-video-cache-control:
@@ -1833,6 +1871,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-firebase/app"
   RNFlashList:
     :path: "../node_modules/@shopify/flash-list"
+  RNFS:
+    :path: "../node_modules/react-native-fs"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
   RNGoogleSignin:
@@ -1865,6 +1905,8 @@ SPEC CHECKSUMS:
   FBSDKGamingServicesKit: da5ffcbe3a9e369db8c235641500ea18e576c40c
   FBSDKLoginKit: 9a581053879a1e6fc3fab8ead341c78c6a318255
   FBSDKShareKit: c3b14e2aa947fc6dc8d3ccdd52bfe5ddc88049cf
+  ffmpeg-kit-ios-https: f9c838aa5400a6c5ba12324c6b798f52197ba354
+  ffmpeg-kit-react-native: 3cea88c9c5cfad62e1465279ea7d800dfbba3b00
   Firebase: 91fefd38712feb9186ea8996af6cbdef41473442
   FirebaseAnalytics: b5efc493eb0f40ec560b04a472e3e1a15d39ca13
   FirebaseCore: 11dc8a16dfb7c5e3c3f45ba0e191a33ac4f50894
@@ -1914,6 +1956,7 @@ SPEC CHECKSUMS:
   react-native-fbsdk-next: 84746ea062dc3b1a422154d7674ba4c5836b6d82
   react-native-safe-area-context: dcab599c527c2d7de2d76507a523d20a0b83823d
   react-native-skia: 4d2ccc473d3a762a8337046a4ffb61fe2488feaa
+  react-native-slider: d303826dbd07814ebba94464ea1e41d59b610116
   react-native-video: 59f262a2d87c998b747ca1f031efb6eba1c156b5
   react-native-video-cache-control: e5631162b59daa9120551cf2145242484bf64357
   react-native-view-shot: 6b7ed61d77d88580fed10954d45fad0eb2d47688
@@ -1945,6 +1988,7 @@ SPEC CHECKSUMS:
   RNFastImage: 5c9c9fed9c076e521b3f509fe79e790418a544e8
   RNFBApp: 91311b27bc9a33e23b76a62825afd1635501018a
   RNFlashList: b521ebdd7f9352673817f1d98e8bdc0c8cf8545b
+  RNFS: 4ac0f0ea233904cb798630b3c077808c06931688
   RNGestureHandler: 20a4307fd21cbff339abfcfa68192f3f0a6a518b
   RNGoogleSignin: 24d3b3261f78b0fae0aa013f8ab6f8d25e369b0c
   RNImageCropPicker: 601604515fd6fbba318147b0a56aed0be9379415
@@ -1960,6 +2004,6 @@ SPEC CHECKSUMS:
   TOCropViewController: 80b8985ad794298fb69d3341de183f33d1853654
   Yoga: d02ee88821190d82b2daa5cd15640a82ffafaaab
 
-PODFILE CHECKSUM: e30f320b4e2cae5154b63ae02dab37042765f85e
+PODFILE CHECKSUM: 3bd127253f6296c44875b9a6d20416ceee44e7aa
 
 COCOAPODS: 1.15.2

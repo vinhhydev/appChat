@@ -28,3 +28,5 @@ export interface HeaderProps extends Partial<CallbackProps>, UserProps {
 }
 
 export interface FooterProps extends Partial<CallbackProps> {}
+
+export interface CustomProps extends Partial<CallbackProps> {}

@@ -25,7 +25,7 @@ import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {Svg, Path} from 'react-native-svg';
 import ViewShot, {captureRef} from 'react-native-view-shot';
-import {Slider} from '@react-native-assets/slider';
+import {Slider, RangeSlider} from '@react-native-assets/slider';
 import RenderText from './RenderText';
 import {
   BottomSheetBackdrop,
@@ -33,12 +33,21 @@ import {
   BottomSheetModal,
   BottomSheetModalProvider,
 } from '@gorhom/bottom-sheet';
+import {FFmpegKit, ReturnCode, FFmpegKitConfig} from 'ffmpeg-kit-react-native';
+import RNFS from 'react-native-fs';
 import {useAuth} from '../../context/AuthContext';
 import {IMAGES} from '../../constans/images';
 import FastImage from 'react-native-fast-image';
 import DeviceInfo from 'react-native-device-info';
-import Video from 'react-native-video';
+import Video, {OnLoadData, OnProgressData, VideoRef} from 'react-native-video';
 import {Helpers} from '../../common';
+import Animated, {
+  runOnJS,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  withTiming,
+} from 'react-native-reanimated';
 
 export type TextStoryProp = {
   text: string;
@@ -90,8 +99,11 @@ const bottomScreen = heightScreen - bodyScreen;
 const EditDetailStoryScreen = ({route}: any) => {
   const navigation = useNavigation();
   const background = route?.params?.background;
+  const filename = route?.params?.filename;
   const type = route?.params?.type;
+  const duration = route?.params?.duration;
   const viewShot = useRef<ViewShot>(null);
+  const videoRef = useRef<VideoRef>(null);
   const [showDrawView, setShowDrawView] = useState(false);
   const [indexBG, setIndexBG] = useState(0);
   const [showModalEdit, setShowModalEdit] = useState(false);
@@ -116,8 +128,21 @@ const EditDetailStoryScreen = ({route}: any) => {
   const [touchSlider, setTouchSlider] = useState(false);
   const [isDraw, setIsDraw] = useState(false);
   const [showSheet, setShowSheet] = useState(false);
+  const [frames, setFrames] = useState<string[]>([]);
   const {bottomSheetModalRef, handleSheetChanges, handlePresentModalPress} =
     useAuth();
+  const [showTimeLine, setShowTimeLine] = useState(false);
+  const [startTime, setStartTime] = useState(0);
+  const [endTime, setEndTime] = useState(duration ? duration : 0);
+  const valueTimeline = useSharedValue(0);
+
+  const animatedSlideTime = useAnimatedStyle(() => ({
+    transform: [
+      {
+        translateX: valueTimeline.value,
+      },
+    ],
+  }));
 
   const renderBackdrop = useCallback(
     (props: BottomSheetBackdropProps) => (
@@ -262,6 +287,123 @@ const EditDetailStoryScreen = ({route}: any) => {
       }
     }) as TextStoryProp[];
     setListTextStory(newList);
+  };
+  const handleUploadStory = () => {
+    captureRef(viewShot, {
+      format: 'png',
+      quality: 0.8,
+    }).then(uri => {
+      const backgroundStory = {
+        background,
+        type,
+      };
+      // console.log('URI CAPTURE', uri);
+      // setUriCapture(uri);
+      navigation.navigate({
+        name: 'StoryScreen',
+        params: {
+          uriCapture: uri,
+          backgroundStory,
+        },
+      } as never);
+    });
+  };
+
+  const handleEditVideo = () => {
+    setShowTimeLine(true);
+  };
+
+  const handleVideoLoad = async (e: OnLoadData) => {
+    console.log('BACKGROUND', background);
+
+    const destinationPath = `${RNFS.CachesDirectoryPath}/${filename?.replace(
+      '.mp4',
+      '',
+    )}`;
+    let uriVideo = '';
+    if (await RNFS.exists(destinationPath)) {
+      uriVideo = destinationPath;
+    } else {
+      if (Platform.OS === 'ios') {
+        uriVideo = await RNFS.copyAssetsVideoIOS(background, destinationPath);
+      }
+    }
+
+    const outputImagePath = `${destinationPath}_%4d.png`;
+    const videoDuration = Math.ceil(e.duration);
+    const frameNumber = 10; // default 10 frame per second
+    const FRAME_PER_SEC = videoDuration / frameNumber;
+    const FRAME_PER = FRAME_PER_SEC < 1 ? FRAME_PER_SEC * 10 : FRAME_PER_SEC;
+    if (
+      await RNFS.exists(
+        outputImagePath.replace('%4d.png', `${String(1).padStart(4, '0')}.png`),
+      )
+    ) {
+      const _frames = [];
+      for (let i = 0; i < frameNumber; i++) {
+        _frames.push(
+          `${outputImagePath.replace(
+            '%4d.png',
+            `${String(i + 1).padStart(4, '0')}.png`,
+          )}`,
+        );
+      }
+      setFrames(_frames);
+    } else {
+      const ffmpegCommand = `-ss 0 -i ${
+        'file://' + uriVideo
+      } -vf "fps=${FRAME_PER}/1:round=up,scale=80:-2" -vframes ${frameNumber} ${outputImagePath}`;
+
+      FFmpegKit.executeAsync(ffmpegCommand, async session => {
+        const state = FFmpegKitConfig.sessionStateToString(
+          await session.getState(),
+        );
+        const returnCode = await session.getReturnCode();
+        const failStackTrace = await session.getFailStackTrace();
+        const duration = await session.getDuration();
+
+        if (ReturnCode.isSuccess(returnCode)) {
+          console.log(
+            `Encode completed successfully in ${duration} milliseconds;`,
+          );
+          console.log(`Check at ${outputImagePath}`);
+          const _frames = [];
+          for (let i = 0; i < frameNumber; i++) {
+            _frames.push(
+              `${outputImagePath.replace(
+                '%4d.png',
+                `${String(i + 1).padStart(4, '0')}.png`,
+              )}`,
+            );
+          }
+
+          setFrames(_frames);
+        } else if (ReturnCode.isCancel(returnCode)) {
+          console.log('Encode canceled');
+        } else {
+          console.log(
+            `Encode failed with state ${state} and rc ${returnCode}.${failStackTrace}`,
+          );
+        }
+      });
+    }
+  };
+
+  const handleOnPressVideo = (e: OnProgressData) => {
+    const widthLine = DIMENSIONS.width - 45;
+    const positionVideo = (e.currentTime * widthLine) / duration;
+    const startPositon = (startTime * widthLine) / duration;
+    // console.log('ONPRESS', e.currentTime);
+    valueTimeline.value = withTiming(positionVideo, {}, call => {
+      runOnJS(resetTime)(e, startPositon);
+    });
+  };
+
+  const resetTime = (e: OnProgressData, startPositon: number) => {
+    if (e.currentTime >= endTime || e.currentTime >= duration) {
+      videoRef.current?.seek(startTime);
+      valueTimeline.value = startPositon;
+    }
   };
 
   //view list color
@@ -566,27 +708,6 @@ const EditDetailStoryScreen = ({route}: any) => {
     );
   };
 
-  const handleUploadStory = () => {
-    captureRef(viewShot, {
-      format: 'jpg',
-      quality: 0.8,
-    }).then(uri => {
-      const backgroundStory = {
-        background,
-        type,
-      };
-      // console.log('URI CAPTURE', uri);
-      // setUriCapture(uri);
-      navigation.navigate({
-        name: 'StoryScreen',
-        params: {
-          uriCapture: uri,
-          backgroundStory,
-        },
-      } as never);
-    });
-  };
-
   //show bottom sheet sticker
   const sheetSticker = useMemo(() => {
     return (
@@ -687,6 +808,19 @@ const EditDetailStoryScreen = ({route}: any) => {
                     color={COLORS.WHITE_COLOR}
                   />
                 </TouchableOpacity>
+                {!Helpers.isNullOrUndefined(type) && type === 'video' && (
+                  <TouchableOpacity
+                    onPress={() => {
+                      setShowTimeLine(true);
+                    }}
+                    style={{marginLeft: 30}}>
+                    <IconV2
+                      name="content-cut"
+                      size={30}
+                      color={COLORS.WHITE_COLOR}
+                    />
+                  </TouchableOpacity>
+                )}
               </View>
               {Helpers.isNullOrUndefined(background) ? (
                 <TouchableOpacity onPress={handleChangeBackground}>
@@ -705,7 +839,11 @@ const EditDetailStoryScreen = ({route}: any) => {
             <LinearGradient
               start={{x: 0, y: 0.1}}
               end={{x: 0.7, y: 0.3}}
-              colors={background ? ['transparent'] : LIST_BG_EDIT[indexBG]}
+              colors={
+                background
+                  ? ['transparent', 'transparent']
+                  : LIST_BG_EDIT[indexBG]
+              }
               style={styles.containerBackground}>
               <>
                 {!showSheet && (
@@ -787,14 +925,16 @@ const EditDetailStoryScreen = ({route}: any) => {
                   'transparent',
                   'transparent',
                 ]}
-                style={[styles.containerBackground, {zIndex: 1}]}
+                style={[styles.containerBackground, {zIndex: -1}]}
               />
               <View style={styles.containerBackground}>
                 <Video
+                  ref={videoRef}
                   style={{width: '100%', height: '100%'}}
                   source={{uri: background}}
-                  repeat
                   resizeMode="contain"
+                  onLoad={handleVideoLoad}
+                  onProgress={handleOnPressVideo}
                 />
               </View>
             </>
@@ -805,8 +945,9 @@ const EditDetailStoryScreen = ({route}: any) => {
               resizeMode="contain"
             />
           )}
-          <View style={styles.bottomTool}>
-            {!isTouchView && !showDrawView && !showSheet && (
+          <View
+            style={[styles.bottomTool, showTimeLine && {paddingHorizontal: 0}]}>
+            {!isTouchView && !showDrawView && !showSheet && !showTimeLine && (
               <>
                 <TouchableOpacity style={{alignItems: 'center'}}>
                   <Icon
@@ -859,6 +1000,84 @@ const EditDetailStoryScreen = ({route}: any) => {
                   />
                 </Pressable>
                 {listColor}
+              </View>
+            )}
+            {showTimeLine && frames?.length > 0 && (
+              <View
+                style={{
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  flexDirection: 'row',
+                  width: DIMENSIONS.width,
+                  paddingHorizontal: 30,
+                }}>
+                <View
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+
+                    zIndex: 999,
+                    width: DIMENSIONS.width - 45,
+                    alignSelf: 'center',
+                  }}>
+                  <Animated.View
+                    style={[
+                      animatedSlideTime,
+                      {
+                        position: 'absolute',
+                        top: 0,
+                        borderRadius: 8,
+                        zIndex: 99,
+                        backgroundColor: COLORS.ERROR_COLOR,
+                        height: bottomScreen - 50,
+                        width: 5,
+                      },
+                    ]}
+                  />
+                  <RangeSlider
+                    range={[0, duration]}
+                    minimumValue={0}
+                    maximumValue={duration}
+                    minimumRange={1}
+                    outboundColor="rgba(0,0,0,0.5)"
+                    inboundColor="transparent"
+                    thumbTintColor={COLORS.WHITE_COLOR}
+                    thumbStyle={{height: bottomScreen - 50, width: 10}}
+                    thumbSize={40}
+                    style={{
+                      width: '100%',
+                      height: bottomScreen - 50,
+                    }}
+                    trackStyle={{
+                      width: '100%',
+                      height: bottomScreen - 50,
+                      borderWidth: 2,
+                      borderColor: COLORS.WHITE_COLOR,
+                    }}
+                    onValueChange={value => {
+                      console.log('CHANGE', value);
+                      setStartTime(value[0]);
+                      setEndTime(value[1]);
+                    }}
+                  />
+                </View>
+
+                {frames &&
+                  frames?.map((val, index) => {
+                    return (
+                      <FastImage
+                        key={`previewVideo-${index}`}
+                        source={{uri: 'file://' + val}}
+                        resizeMode="cover"
+                        style={{
+                          width: (DIMENSIONS.width - 60) / frames.length,
+                          height: bottomScreen - 50,
+                          // aspectRatio:
+                          //   (DIMENSIONS.width - 30) / 10 / (bottomScreen - 50),
+                        }}
+                      />
+                    );
+                  })}
               </View>
             )}
           </View>

@@ -17,6 +17,8 @@ import {IMAGES} from '../../constans/images';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
+import {Image} from 'react-native';
+import {Helpers} from '../../common';
 
 type PropsData = {
   openStory: (index: number) => void;
@@ -83,11 +85,25 @@ const RenderItemStory = (props: PropsData) => {
                 />
               </View>
             </View>
+
             <AppText
               text={props.data.item.userName}
               style={styles.txtuserName}
               numberOfLines={2}
             />
+            {!Helpers.isNullOrUndefined(props.data.item.stories[0].link) && (
+              <Image
+                source={{uri: props.data.item.stories[0].link}}
+                style={{
+                  flex: 1,
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                }}
+              />
+            )}
           </ImageBackground>
         ) : (
           <View style={styles.itemView}>
@@ -98,6 +114,19 @@ const RenderItemStory = (props: PropsData) => {
               resizeMode="cover"
               poster={props.data.item.stories[0].url}
             />
+            {!Helpers.isNullOrUndefined(props.data.item.stories[0].link) && (
+              <Image
+                source={{uri: props.data.item.stories[0].link}}
+                style={{
+                  flex: 1,
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                }}
+              />
+            )}
             <View style={styles.viewAvatar}>
               <View style={styles.avatar}>
                 <FastImage

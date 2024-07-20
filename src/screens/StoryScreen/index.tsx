@@ -14,40 +14,44 @@ import {useIsFocused} from '@react-navigation/native';
 import {useAuth} from '../../context/AuthContext';
 import {Helpers} from '../../common';
 import {IStories} from '../../types/storiesType';
-import AppText from '../../components/AppText';
+import BackgroundStory from './BackgroundStory';
 
 const StoryScreen = ({route}: any) => {
-  const [isStoryViewVisible, setIsStoryViewShow] = useState(false);
-  const {user} = useAuth();
-  const [pressedIndex, setPressedIndex] = useState<number>(0);
   const isFocused = useIsFocused();
-  const uriCapture = route?.params?.uriCapture;
-  const backgroundStory = route?.params?.backgroundStory;
+  const paramsUriCapture = route?.params?.uriCapture;
+  const paramsbackgroundStory = route?.params?.backgroundStory;
+  const {user} = useAuth();
+  const [isStoryViewVisible, setIsStoryViewShow] = useState(false);
+  const [pressedIndex, setPressedIndex] = useState<number>(0);
+  const [uriCapture, setUriCapture] = useState(paramsUriCapture);
+  const [backgroundStory, setBackgroundStory] = useState(paramsbackgroundStory);
+
   useEffect(() => {
-    if (isFocused && uriCapture) {
-      console.log('URICAPTURE', uriCapture);
+    if (
+      !Helpers.isNullOrUndefined(paramsUriCapture) &&
+      paramsUriCapture !== uriCapture
+    ) {
+      setUriCapture(paramsUriCapture);
+      setBackgroundStory(paramsbackgroundStory);
+    }
+  }, [isFocused]);
+
+  useEffect(() => {
+    if (uriCapture) {
       const listStory: IStories[] = [
         {
           id: '0-custom',
           duration: 20,
           isReadMore: false,
           isSeen: false,
-          type: 'image',
-          url: uriCapture, // this capture only image
+          type: backgroundStory.type,
+          url: !Helpers.isNullOrUndefined(backgroundStory)
+            ? backgroundStory.background
+            : uriCapture, // this backround is image or video
+          link: !Helpers.isNullOrUndefined(backgroundStory) ? uriCapture : '', // this capture only image
           storyId: stories.length + 1,
         },
       ];
-      if (!Helpers.isNullOrUndefined(backgroundStory)) {
-        listStory.push({
-          id: `0-background`,
-          duration: 20,
-          isReadMore: false,
-          isSeen: false,
-          type: backgroundStory.type,
-          url: backgroundStory.background, // this backround is image or video
-          storyId: stories.length + 1,
-        });
-      }
 
       stories.unshift({
         id: stories.length + 1,
@@ -58,7 +62,7 @@ const StoryScreen = ({route}: any) => {
         stories: listStory,
       });
     }
-  }, [isFocused]);
+  }, [uriCapture]);
 
   const openStories = (index: number) => {
     setIsStoryViewShow(true);
@@ -90,22 +94,9 @@ const StoryScreen = ({route}: any) => {
             />
           )}
           customViewStyle={{
-            zIndex: -999,
+            zIndex: 9,
           }}
-          renderCustomView={callback => (
-            <View // cai nay nen de thang background
-              style={{
-                flex: 1,
-                position: 'absolute',
-                top: 0,
-                backgroundColor: 'red',
-              }}>
-              <AppText
-                text={`Hello-${callback?.progressIndex}`}
-                textColor="blue"
-              />
-            </View>
-          )}
+          renderCustomView={callback => <BackgroundStory {...callback} />}
           backgroundColor={COLORS.TEXT_BLACK_COLOR}
           renderFooterComponent={FooterStory}
           userStoryIndex={pressedIndex}

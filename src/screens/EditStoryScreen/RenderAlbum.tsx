@@ -6,20 +6,13 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
-import {
-  CameraRoll,
-  PhotoIdentifier,
-} from '@react-native-camera-roll/camera-roll';
 import FastImage from 'react-native-fast-image';
-import Video from 'react-native-video';
 import AppText from '../../components/AppText';
 import {COLORS} from '../../constans/colors';
-import {useEffect, useMemo, useState} from 'react';
+import {useMemo, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
+import {Photo} from '.';
 
-interface Photo extends PhotoIdentifier {
-  linkVideo?: string;
-}
 type PropData = {
   data: ListRenderItemInfo<Photo>;
   itemSize: number;
@@ -29,7 +22,6 @@ const RenderAlbum = (props: PropData) => {
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(true);
   const type = useMemo(() => {
-    console.log('props', props.data.item.node);
     return props.data.item.node.type.includes('video') ? 'video' : 'image';
   }, []);
 
@@ -44,6 +36,8 @@ const RenderAlbum = (props: PropData) => {
               type === 'image'
                 ? props.data.item.node.image.uri
                 : props.data.item.linkVideo,
+            filename: props.data.item.node.image.filename,
+            duration: props.data.item.node.image.playableDuration,
             type: type,
           },
         } as never);

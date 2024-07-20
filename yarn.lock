@@ -3622,6 +3622,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-native-community/slider@npm:^4.5.2":
+  version: 4.5.2
+  resolution: "@react-native-community/slider@npm:4.5.2"
+  checksum: 99023660756a1a876fc3d9c1a7cec13f7e414abee3452e1e03d2794bc7f46a9d689740bed5c3889914adf6ed85a55c6017e2f0d73b5de353025ba52bba6e79e1
+  languageName: node
+  linkType: hard
+
 "@react-native-firebase/app@npm:^19.2.2":
   version: 19.2.2
   resolution: "@react-native-firebase/app@npm:19.2.2"
@@ -5746,6 +5753,7 @@ __metadata:
     "@react-native-async-storage/async-storage": ^1.23.1
     "@react-native-camera-roll/camera-roll": ^7.8.1
     "@react-native-community/hooks": ^3.0.0
+    "@react-native-community/slider": ^4.5.2
     "@react-native-firebase/app": ^19.2.2
     "@react-native-google-signin/google-signin": ^11.0.1
     "@react-native/babel-preset": 0.74.83
@@ -5769,6 +5777,7 @@ __metadata:
     "@types/redux-logger": ^3.0.13
     babel-jest: ^29.6.3
     eslint: ^8.19.0
+    ffmpeg-kit-react-native: ^6.0.2
     firebase: ^10.12.0
     jest: ^29.6.3
     lodash: ^4.17.21
@@ -5781,6 +5790,7 @@ __metadata:
     react-native-device-info: ^11.1.0
     react-native-fast-image: ^8.6.3
     react-native-fbsdk-next: ^13.0.0
+    react-native-fs: ^2.20.0
     react-native-gesture-handler: ^2.16.2
     react-native-image-crop-picker: ^0.41.1
     react-native-images-preview: ^0.0.1
@@ -6189,6 +6199,13 @@ __metadata:
   version: 1.0.2
   resolution: "balanced-match@npm:1.0.2"
   checksum: 9706c088a283058a8a99e0bf91b0a2f75497f185980d9ffa8b304de1d9e58ebda7c72c07ebf01dadedaac5b2907b2c6f566f660d62bd336c3468e960403b9d65
+  languageName: node
+  linkType: hard
+
+"base-64@npm:^0.1.0":
+  version: 0.1.0
+  resolution: "base-64@npm:0.1.0"
+  checksum: 5a42938f82372ab5392cbacc85a5a78115cbbd9dbef9f7540fa47d78763a3a8bd7d598475f0d92341f66285afd377509851a9bb5c67bbecb89686e9255d5b3eb
   languageName: node
   linkType: hard
 
@@ -8693,6 +8710,16 @@ __metadata:
   dependencies:
     pend: ~1.2.0
   checksum: c8585fd5713f4476eb8261150900d2cb7f6ff2d87f8feb306ccc8a1122efd152f1783bdb2b8dc891395744583436bfd8081d8e63ece0ec8687eeefea394d4ff2
+  languageName: node
+  linkType: hard
+
+"ffmpeg-kit-react-native@npm:^6.0.2":
+  version: 6.0.2
+  resolution: "ffmpeg-kit-react-native@npm:6.0.2"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 4175aa6d5cb78cffeb0a833d863b39d1cd7818780d36a02e2c3ba72be0b6e131b93c2dfb219f252148863d509bf6671eaa27e9f77ba59ef22debd955fcfb42e2
   languageName: node
   linkType: hard
 
@@ -13140,6 +13167,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-native-fs@npm:^2.20.0":
+  version: 2.20.0
+  resolution: "react-native-fs@npm:2.20.0"
+  dependencies:
+    base-64: ^0.1.0
+    utf8: ^3.0.0
+  peerDependencies:
+    react-native: "*"
+    react-native-windows: "*"
+  peerDependenciesMeta:
+    react-native-windows:
+      optional: true
+  checksum: 0be9bb9a5c13b501d0a3006efc3aa5c0b5b211456ee04718297f4e522532f3527f1daa220bd67d3b82d819ed8fdab8f64b7d6e0d7b768c1fd1d8ec9122d94316
+  languageName: node
+  linkType: hard
+
 "react-native-gesture-handler@npm:^2.16.2":
   version: 2.16.2
   resolution: "react-native-gesture-handler@npm:2.16.2"
@@ -15430,6 +15473,13 @@ __metadata:
   peerDependencies:
     react: ^16.8.0 || ^17.0.0 || ^18.0.0
   checksum: fe07c071c4da3645f112c38c0e57beb479a8838616ff4e92598256ecce527f2888c08febc7f9b2f0ce2f0e18540ba3cde41eb2035e4fafcb4f52955037098a81
+  languageName: node
+  linkType: hard
+
+"utf8@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "utf8@npm:3.0.0"
+  checksum: cb89a69ad9ab393e3eae9b25305b3ff08bebca9adc839191a34f90777eb2942f86a96369d2839925fea58f8f722f7e27031d697f10f5f39690f8c5047303e62d
   languageName: node
   linkType: hard
 

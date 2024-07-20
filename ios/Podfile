@@ -17,6 +17,9 @@ end
 node_require('react-native/scripts/react_native_pods.rb')
 node_require('react-native-permissions/scripts/setup.rb')
 
+
+
+
 platform :ios, min_ios_version_supported
 prepare_react_native_project!
 
@@ -51,6 +54,7 @@ if linkage != nil
 end
 
 target 'appChat' do
+  pod 'ffmpeg-kit-react-native', :path => '../node_modules/ffmpeg-kit-react-native/ffmpeg-kit-react-native.podspec'
   config = use_native_modules!
   use_frameworks! :linkage => :static
   $RNFirebaseAsStaticFramework = true
@@ -71,6 +75,8 @@ target 'appChat' do
     # Pods for testing
   end
 
+  
+ 
   pod 'SDWebImagePhotosPlugin'
 
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'

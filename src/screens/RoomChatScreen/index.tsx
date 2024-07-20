@@ -44,6 +44,7 @@ import DeviceInfo from 'react-native-device-info';
 import FastImage from 'react-native-fast-image';
 import {useAuth} from '../../context/AuthContext';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import Video from 'react-native-video';
 
 // check phone have bunny ear
 const checkNotch = DeviceInfo.hasNotch();
@@ -65,7 +66,7 @@ const RoomChatScreen = ({route}: any) => {
   useEffect(() => {
     createRoom();
     updateSeenMessage();
-    const getRoom = getRoomId(user.userId, chatUser.userId);
+    const getRoom: string = getRoomId(user.userId, chatUser.userId);
 
     const docRef = doc(db, 'rooms', getRoom);
     const messageRef = collection(docRef, 'messages');
@@ -373,8 +374,9 @@ const RoomChatScreen = ({route}: any) => {
                             source={{uri: item.path}}
                           />
                         ) : (
-                          <FastImage
+                          <Video
                             resizeMode="cover"
+                            paused
                             style={styles.imagePick}
                             source={{uri: item.path}}
                           />

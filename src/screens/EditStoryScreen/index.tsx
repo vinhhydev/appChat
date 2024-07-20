@@ -22,6 +22,7 @@ import {Helpers} from '../../common';
 import {COLORS} from '../../constans/colors';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {PaperProvider, Portal} from 'react-native-paper';
+import {PermissionsAndroid} from 'react-native';
 
 export interface Photo extends PhotoIdentifier {
   linkVideo?: string;
@@ -73,7 +74,23 @@ const EditStoryScreen = () => {
       }
     }
   }, [chooseAlbum?.indexAlbum]);
-  const getAllMedia = () => {
+
+  const hasAndroidPermission = async () => {
+    const permission = PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE;
+
+    const hasPermission = await PermissionsAndroid.check(permission);
+    if (hasPermission) {
+      return true;
+    }
+
+    const status = await PermissionsAndroid.request(permission);
+    return status === 'granted';
+  };
+
+  const getAllMedia = async () => {
+    if (Platform.OS === 'android' && !(await hasAndroidPermission())) {
+      return;
+    }
     CameraRoll.getPhotos({
       first: 20,
       assetType: 'All',
@@ -83,8 +100,6 @@ const EditStoryScreen = () => {
         await Promise.all(
           r.edges.map(async val => {
             if (val.node.type.includes('video')) {
-              console.log('TRUE');
-
               if (Platform.OS === 'ios') {
                 const photoThumbnail = await CameraRoll.getPhotoThumbnail(
                   val.node.image.uri,
@@ -132,7 +147,7 @@ const EditStoryScreen = () => {
           albumType: 'All',
           assetType: 'All',
         }).then(album => {
-          console.log('ALBUM', album);
+          // console.log('ALBUM', album);
           const tempAlbum: AlbumTracked[] = [];
           // get first image in album
           album.map((val, index) => {
