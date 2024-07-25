@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">appChat</string>
+    <string name="app_name">RingChat</string>
     <string name="facebook_app_id">769560871949046</string>
     <string name="facebook_client_token">a51d2aa1d15e5305a2a3e8f7608fb3b6</string>
 </resources>
