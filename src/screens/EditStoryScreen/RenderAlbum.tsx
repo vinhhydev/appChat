@@ -12,6 +12,7 @@ import {COLORS} from '../../constans/colors';
 import {useMemo, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {Photo} from '.';
+import {Helpers} from '../../common';
 
 type PropData = {
   data: ListRenderItemInfo<Photo>;
@@ -36,7 +37,11 @@ const RenderAlbum = (props: PropData) => {
               type === 'image'
                 ? props.data.item.node.image.uri
                 : props.data.item.linkVideo,
-            filename: props.data.item.node.image.filename,
+            filename: !Helpers.isNullOrUndefined(
+              props.data.item.node.image.filename,
+            )
+              ? props.data.item.node.image.filename
+              : props.data.item.node.id,
             duration: props.data.item.node.image.playableDuration,
             type: type,
           },

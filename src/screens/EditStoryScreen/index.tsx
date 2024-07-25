@@ -75,17 +75,52 @@ const EditStoryScreen = () => {
     }
   }, [chooseAlbum?.indexAlbum]);
 
-  const hasAndroidPermission = async () => {
-    const permission = PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE;
+  async function hasAndroidPermission() {
+    const getCheckPermissionPromise = async () => {
+      if ((Platform.Version as number) >= 33) {
+        return Promise.all([
+          PermissionsAndroid.check(
+            PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES,
+          ),
+          PermissionsAndroid.check(
+            PermissionsAndroid.PERMISSIONS.READ_MEDIA_VIDEO,
+          ),
+        ]).then(
+          ([hasReadMediaImagesPermission, hasReadMediaVideoPermission]) =>
+            hasReadMediaImagesPermission && hasReadMediaVideoPermission,
+        );
+      } else {
+        return PermissionsAndroid.check(
+          PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+        );
+      }
+    };
 
-    const hasPermission = await PermissionsAndroid.check(permission);
+    const hasPermission = await getCheckPermissionPromise();
     if (hasPermission) {
       return true;
     }
+    const getRequestPermissionPromise = async () => {
+      if ((Platform.Version as number) >= 33) {
+        return PermissionsAndroid.requestMultiple([
+          PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES,
+          PermissionsAndroid.PERMISSIONS.READ_MEDIA_VIDEO,
+        ]).then(
+          statuses =>
+            statuses[PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES] ===
+              PermissionsAndroid.RESULTS.GRANTED &&
+            statuses[PermissionsAndroid.PERMISSIONS.READ_MEDIA_VIDEO] ===
+              PermissionsAndroid.RESULTS.GRANTED,
+        );
+      } else {
+        return PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+        ).then(status => status === PermissionsAndroid.RESULTS.GRANTED);
+      }
+    };
 
-    const status = await PermissionsAndroid.request(permission);
-    return status === 'granted';
-  };
+    return await getRequestPermissionPromise();
+  }
 
   const getAllMedia = async () => {
     if (Platform.OS === 'android' && !(await hasAndroidPermission())) {
@@ -139,6 +174,7 @@ const EditStoryScreen = () => {
         const sortMedia = filterThumbnail.sort(
           (a, b) => b.node.timestamp - a.node.timestamp,
         );
+        console.log('IM', sortMedia);
 
         setGallery(sortMedia);
         setTempGallery(sortMedia);
@@ -169,8 +205,8 @@ const EditStoryScreen = () => {
                 image = sortMedia.find(
                   x =>
                     x.node.subTypes[0]
-                      .toLowerCase()
-                      .indexOf(val.title.toLowerCase()) > -1,
+                      ?.toLowerCase()
+                      .indexOf(val.title?.toLowerCase()) > -1,
                 )?.node.image.uri;
               }
               tempAlbum.push({
